@@ -44,6 +44,14 @@ public:
             cpr::Session session;
             session.SetUrl(cpr::Url(req.get_url_string().toStdString()));
             cpr::Header headers;
+
+            //            qDebug() << "Request url: " << req.get_url_string();
+
+#ifdef _MSC_VER
+            //@todo: use force winssl
+            session.SetVerifySsl(cpr::VerifySsl(false));
+#endif
+
             for (const auto& h : req.get_headers()) {
                 headers.insert(std::pair<std::string, std::string>(h.first.toStdString(), h.second.toStdString()));
             }
@@ -64,6 +72,12 @@ public:
                         std::runtime_error("Unsupported HTTP method")));
                 // nothing yet
                 break;
+            }
+
+            if (resp.error && resp.text.empty()) {
+                emitter.on_error(std::make_exception_ptr(
+                    std::runtime_error(fmt::format("Unable to proceed request {0}: [{1}] {2}", req.get_url_string().toStdString(), resp.error.code, resp.error.message))));
+                return;
             }
 
             nlohmann::json val;
