@@ -4,3 +4,4 @@ cmake-build-*
 *.autosave
 CMakeLists.txt.user.*
 install/ledger/build
+version.h
