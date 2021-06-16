@@ -331,7 +331,7 @@ if (PACKAGING)
 			message(STATUS "Found qt mac deploy: ${MACDEPLOYQT_EXECUTABLE}")
 			add_custom_command(
 				TARGET ${PROJECT_NAME} POST_BUILD
-				COMMAND "${MACDEPLOYQT_EXECUTABLE}" "${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}.app"
+				COMMAND "${MACDEPLOYQT_EXECUTABLE}" "${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}.app" "-dmg"
 				COMMENT "Running macdeployqt..."
 			)
 			#-always-overwrite
