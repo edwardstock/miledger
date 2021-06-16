@@ -5,19 +5,6 @@ project(miledger
         VERSION 0.1.0
         DESCRIPTION "Minter desktop console"
         )
-#-DMINTER_TESTNET=On
-#-DCMAKE_PREFIX_PATH=/Users/edward/Qt/6.1.0/clang_64/lib/cmake/
-#-DQT_DIR=/Users/edward/Qt/6.1.0/clang_64/lib/cmake/Qt6
-#-DQT_QMAKE_EXECUTABLE=/Users/edward/Qt/6.1.0/clang_64/lib/cmake/bin/qmake.exe
-#-DQt6_DIR=/Users/edward/Qt/6.1.0/clang_64/lib/cmake/Qt6
-#-DQt6Widgets_DIR=/Users/edward/Qt/6.1.0/clang_64/lib/cmake/Qt6Widgets
-#-DQt6WidgetsTools_DIR=/Users/edward/Qt/6.1.0/clang_64/lib/cmake/Qt6WidgetsTools
-#-DQt6Concurrent_DIR=/Users/edward/Qt/6.1.0/clang_64/lib/cmake/Qt6Concurrent
-#-DQt6Gui_DIR=/Users/edward/Qt/6.1.0/clang_64/lib/cmake/Qt6Gui
-#-DQt6GuiTools_DIR=/Users/edward/Qt/6.1.0/clang_64/lib/cmake/Qt6GuiTools
-#-DQt6EntryPoint_DIR=/Users/edward/Qt/6.1.0/clang_64/lib/cmake/Qt6EntryPoint
-#-DQt6Core_DIR=/Users/edward/Qt/6.1.0/clang_64/lib/cmake/Qt6Core
-#-DQt6CoreTools_DIR=/Users/edward/Qt/6.1.0/clang_64/lib/cmake/Qt6CoreTools
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/modules)
 
@@ -96,6 +83,9 @@ endif ()
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cfg/miledger-config.in.h ${CMAKE_CURRENT_SOURCE_DIR}/include/miledger-config.h)
 if (APPLE)
 	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cfg/Info.plist ${CMAKE_BINARY_DIR}/Info.plist)
+endif ()
+if (WIN32)
+	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cfg/version.in.h ${CMAKE_CURRENT_SOURCE_DIR}/version.h)
 endif ()
 
 
@@ -198,18 +188,14 @@ elseif (APPLE)
 	    )
 endif ()
 
-if (APPLE)
-	#	set(CMAKE_MACOSX_RPATH ON)
-	#/Users/edward/Qt/6.1.0/clang_64/lib/cmake/Qt6
-	#	set(CMAKE_INSTALL_NAME_DIR ${QT_DIR}/../../../bin)
-	#	set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-	#	set(CMAKE_INSTALL_RPATH "${QT_DIR}/../../../lib" CACHE STRING "" FORCE)
-	#	set(CMAKE_BUILD_RPATH "${QT_DIR}/../../../lib" CACHE STRING "" FORCE)
-endif (APPLE)
+if (WIN32 AND PACKAGING)
+	add_executable(${PROJECT_NAME} WIN32 ${PROJECT_SOURCES})
+else ()
+	qt_add_executable(${PROJECT_NAME}
+	                  ${PROJECT_SOURCES}
+	                  )
+endif ()
 
-qt_add_executable(${PROJECT_NAME}
-                  ${PROJECT_SOURCES}
-                  )
 
 if (ENABLE_SANITIZE)
 	target_link_libraries(${PROJECT_NAME} PRIVATE asan)
@@ -223,11 +209,6 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE CACHE BOOL "" FORCE)
 if (APPLE)
 
 	if (PACKAGING)
-		#		set(CMAKE_MACOSX_RPATH "../Frameworks")
-		#		set(CMAKE_INSTALL_RPATH "../Frameworks")
-		#		set(CMAKE_BUILD_RPATH  "../Frameworks")
-		#		set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE CACHE BOOL "" FORCE)
-		#		set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE CACHE BOOL "" FORCE)
 		set_target_properties(${PROJECT_NAME} PROPERTIES
 		                      LINKER_LANGUAGE CXX
 		                      LINK_FLAGS "-Wl,-rpath,@executable_path/../Frameworks"
@@ -253,58 +234,6 @@ if (APPLE)
 
 endif ()
 
-#if (UNIX AND NOT APPLE)
-#	find_library(UDEV_LIB udev NAME libudev.a libudev.so udev)
-#	if (UDEV_LIB-NOT_FOUND)
-#		message(FATAL_ERROR "libudev not found!")
-#	endif ()
-#
-#	find_package(LibUsb 1.0 REQUIRED)
-#
-#	message(STATUS "libudev: ${UDEV_LIB}")
-#	message(STATUS "libusb: ${LibUSB_LIBRARIES} ${LibUsb_INCLUDE_DIRS}")
-#	target_include_directories(${PROJECT_NAME} PUBLIC ${LibUsb_INCLUDE_DIRS})
-#
-#	target_link_libraries(${PROJECT_NAME} PRIVATE ${UDEV_LIB})
-#	target_link_libraries(${PROJECT_NAME} PRIVATE ${LibUSB_LIBRARIES})
-#
-#elseif (APPLE)
-#	find_library(IOKIT_FRAMEWORK IOKit REQUIRED)
-#	find_library(CORE_FOUNDATION_FRAMEWORK CoreFoundation REQUIRED)
-#	find_library(USB_LIB usb REQUIRED NAMES libusb-1.0.a libusb-1.0-dylib libusb-1.0.0.dylib)
-#	message(STATUS "libusb: ${USB_LIB}")
-#	message(STATUS "Framework IOKit: ${IOKIT_FRAMEWORK}")
-#	message(STATUS "Framework CoreFoundation: ${CORE_FOUNDATION_FRAMEWORK}")
-#	target_link_libraries(${PROJECT_NAME} PRIVATE ${USB_LIB})
-#	target_link_libraries(${PROJECT_NAME} PRIVATE ${IOKIT_FRAMEWORK})
-#	target_link_libraries(${PROJECT_NAME} PRIVATE ${CORE_FOUNDATION_FRAMEWORK})
-#elseif (MSVC)
-#	#		find_library(MS_HID_LIB hid NAMES hid.lib hid.dll)
-#	#		message(STATUS "WIN32      hid: ${MS_HID_LIB}")
-#	#
-#	#		find_library(MS_KERNEL32_LIB kernel32 NAMES kernel32.lib kernel32.dll)
-#	#		message(STATUS "WIN32 kernel32: ${MS_KERNEL32_LIB}")
-#	#
-#	#		find_library(MS_COMDL32_LIB comdlg32 NAMES comdlg32.lib comdlg32.dll)
-#	#		message(STATUS "WIN32 comdlg32: ${MS_COMDL32_LIB}")
-#	#
-#	#		find_library(MS_SETUPAPI_LIB setupapi NAMES setupapi.lib setupapi.dll)
-#	#		message(STATUS "WIN32 setupapi: ${MS_SETUPAPI_LIB}")
-#	#
-#	#		target_link_libraries(${PROJECT_NAME} PRIVATE ${MS_HID_LIB} ${MS_KERNEL32_LIB} ${MS_COMDL32_LIB})
-#	#		target_link_libraries(${PROJECT_NAME} PRIVATE ${MS_HID_LIB} ${MS_SETUPAPI_LIB})
-#	include(FindWinHID)
-#	target_link_libraries(${PROJECT_NAME} PRIVATE ${WINHID_LIBRARY} ${WINHID_SETUPAPI_LIBRARY})
-#	target_include_directories(${PROJECT_NAME} PRIVATE ${WINHID_INCLUDE_DIR})
-#	target_include_directories(${PROJECT_NAME} PRIVATE ${WINHID_CRT_INCLUDE_DIR})
-#
-#elseif (MINGW)
-#	include(FindWinHID)
-#	target_link_libraries(${PROJECT_NAME} PRIVATE ${WINHID_LIBRARY} ${WINHID_SETUPAPI_LIBRARY})
-#	target_include_directories(${PROJECT_NAME} PRIVATE ${WINHID_INCLUDE_DIR})
-#	target_include_directories(${PROJECT_NAME} PRIVATE ${WINHID_CRT_INCLUDE_DIR})
-#endif ()
-
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Network)
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Concurrent)
@@ -318,6 +247,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE CONAN_PKG::rxcpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE CONAN_PKG::cpr)
 target_link_libraries(${PROJECT_NAME} PRIVATE CONAN_PKG::libcurl)
 target_link_libraries(${PROJECT_NAME} PRIVATE CONAN_PKG::libpng)
+target_link_libraries(${PROJECT_NAME} PRIVATE CONAN_PKG::fmt)
 
 #include(material_widgets)
 #target_link_libraries(${PROJECT_NAME} PRIVATE qt_material)
@@ -331,10 +261,20 @@ if (PACKAGING)
 			message(STATUS "Found qt mac deploy: ${MACDEPLOYQT_EXECUTABLE}")
 			add_custom_command(
 				TARGET ${PROJECT_NAME} POST_BUILD
-				COMMAND "${MACDEPLOYQT_EXECUTABLE}" "${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}.app" "-dmg"
+				COMMAND "${MACDEPLOYQT_EXECUTABLE}" "${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}.app" "-dmg" "-always-overwrite"
 				COMMENT "Running macdeployqt..."
 			)
 			#-always-overwrite
+		endif ()
+	elseif (WIN32)
+		find_program(WINDEPLOYQT_EXECUTABLE windeployqt)
+		if (WINDEPLOYQT_EXECUTABLE)
+			message(STATUS "Found qt win deploy: ${WINDEPLOYQT_EXECUTABLE}")
+			add_custom_command(
+				TARGET ${PROJECT_NAME} POST_BUILD
+				COMMAND "${WINDEPLOYQT_EXECUTABLE}" "${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}.exe" "--no-virtualkeyboard"
+				COMMENT "Running windeployqt..."
+			)
 		endif ()
 	endif ()
 endif ()

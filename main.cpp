@@ -24,9 +24,21 @@
 #include "include/rxqt_instance.hpp"
 #include "include/testwindow.h"
 
+#include <iostream>
+#include <qlogging.h>
+
+// example for custom message handler
+void customLogHandler(QtMsgType type, const QMessageLogContext& context, const QString& msg) {
+
+    std::cout << msg.toStdString() << std::endl;
+}
+
 int main(int argc, char* argv[]) {
     QApplication a(argc, argv);
     QApplication::setQuitOnLastWindowClosed(false);
+
+    // custom handler start
+    qInstallMessageHandler(&customLogHandler);
 
     QApplication::setOrganizationName("MinterTeam");
     QApplication::setOrganizationDomain("minter.network");
@@ -43,21 +55,6 @@ int main(int argc, char* argv[]) {
     QFontDatabase::addApplicationFont(":/fonts/resources/fonts/_inter_italic.ttf");
 
     QPalette p = a.palette();
-
-    //        qDebug() << "Window color: " << p.color(QPalette::Window).name();
-    //        qDebug() << "WindowText color: " << p.color(QPalette::WindowText).name();
-    //        qDebug() << "Base color: " << p.color(QPalette::Base).name();
-    //        qDebug() << "AlternateBase color: " << p.color(QPalette::AlternateBase).name();
-    //        qDebug() << "ToolTipBase color: " << p.color(QPalette::ToolTipBase).name();
-    //        qDebug() << "ToolTipText color: " << p.color(QPalette::ToolTipText).name();
-    //        qDebug() << "Text color: " << p.color(QPalette::Text).name();
-    //        qDebug() << "Button color: " << p.color(QPalette::ButtonText).name();
-    //        qDebug() << "BrightText color: " << p.color(QPalette::BrightText).name();
-    //        qDebug() << "Link color: " << p.color(QPalette::Link).name();
-    //        qDebug() << "Highlight color: " << p.color(QPalette::Highlight).name();
-    //        qDebug() << "HighlightedText color: " << p.color(QPalette::HighlightedText).name();
-    ////        p.setColor(QPalette::Window, QColor(53,53,53));
-    //        a.setPalette(p);
 
 #ifdef MILEDGER_APPLE
     QFile style(":/stylesheet/style_osx.qss");

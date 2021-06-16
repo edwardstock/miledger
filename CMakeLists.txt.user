@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.15.0, 2021-06-14T03:47:24. -->
+<!-- Written by QtCreator 4.15.0, 2021-06-16T13:58:07. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -355,7 +355,7 @@
     <value type="bool" key="RunConfiguration.UseLibrarySearchPath">true</value>
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/Users/edward/Sync/projects/cpp/build-miledger-Desktop_Qt_6_1_0_clang_64bit-Debug/bin</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/Users/edward/Sync/projects/cpp/build-miledger-Desktop_Qt_6_1_0_clang_64bit-Debug/bin/miledger.app/Contents/MacOS</value>
    </valuemap>
    <value type="int" key="ProjectExplorer.Target.RunConfigurationCount">1</value>
   </valuemap>
