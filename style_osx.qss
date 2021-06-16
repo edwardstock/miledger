@@ -1,0 +1,42 @@
+QWidget
+{
+	font-family: 'Inter';
+	font-weight: 400;
+/*	font-feature-settings: "zero";*/
+}
+
+QLabel {
+
+}
+
+QLabel#inputFieldLabel {
+	font-weight: 600;
+}
+
+#inputFieldInput {
+	font-size: 14px;
+	font-weight: 600;
+}
+
+QLabel#inputFieldError {
+	font-size: 10px;
+	color: #C83A3A;
+	font-weight: 600;
+}
+
+QLabel#labelDialogTitle {
+
+}
+
+QLineEdit
+{
+	font-size: 14px;
+}
+
+QLineEdit#sendDialogInput {
+
+}
+
+QTabBar::tab {
+	width: 100px;
+}

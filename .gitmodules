@@ -1,0 +1,9 @@
+[submodule "libs/qmdns"]
+	path = libs/qmdns
+	url = https://github.com/nitroshare/qmdnsengine.git
+[submodule "libs/rxqt"]
+	path = libs/rxqt
+	url = https://github.com/tetsurom/rxqt.git
+[submodule "libs/material"]
+	path = libs/material
+	url = https://github.com/laserpants/qt-material-widgets.git

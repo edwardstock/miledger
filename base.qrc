@@ -1,0 +1,62 @@
+<RCC>
+    <qresource prefix="/stylesheet">
+        <file>style_win.qss</file>
+        <file>style_osx.qss</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="ic_launcher_32.png">resources/icon-32.png</file>
+        <file alias="ic_launcher_64.png">resources/icon-64.png</file>
+        <file alias="ic_launcher_16.png">resources/icon-16.png</file>
+        <file alias="ic_launcher_128.png">resources/icon-128.png</file>
+        <file alias="ic_launcher_512.png">resources/icon-128.png</file>
+
+        <file alias="ic_copy_content_light.png">resources/icons/ic_content_copy_light.png</file>
+        <file alias="ic_copy_content_dark.png">resources/icons/ic_content_copy_dark.png</file>
+        <file alias="ic_refresh_dark.png">resources/icons/ic_refresh_dark.png</file>
+        <file alias="ic_refresh_light.png">resources/icons/ic_refresh_light.png</file>
+        <file alias="ic_usb_off_light.png">resources/icons/ic_usb_off_light.png</file>
+        <file alias="ic_usb_off_dark.png">resources/icons/ic_usb_off_dark.png</file>
+        <file alias="ic_usb_on_dark.png">resources/icons/ic_usb_on_dark.png</file>
+        <file alias="ic_usb_on_light.png">resources/icons/ic_usb_on_light.png</file>
+        <file alias="ic_tx_exchange_dark.png">resources/icons/ic_tx_exchange_dark.png</file>
+        <file alias="ic_tx_exchange_light.png">resources/icons/ic_tx_exchange_light.png</file>
+        <file alias="ic_tx_send_light.png">resources/icons/ic_tx_send_light.png</file>
+        <file alias="ic_tx_send_dark.png">resources/icons/ic_tx_send_dark.png</file>
+
+        <file alias="ic_refresh.svg">resources/icons/ic_refresh_24px.svg</file>
+        <file alias="ic_tx_send.svg">resources/icons/ic_tx_send.svg</file>
+        <file alias="ic_tx_exchange.png">resources/icons/ic_tx_exchange.png</file>
+        <file alias="ic_tx_pools.svg">resources/icons/ic_tx_pools.svg</file>
+        <file alias="ic_tx_staking.svg">resources/icons/ic_tx_staking.svg</file>
+        <file alias="ic_logo_btc.png">resources/icons/ic_logo_btc.png</file>
+        <file alias="ic_logo_eth.png">resources/icons/ic_logo_eth.png</file>
+        <file alias="ic_logo_hub.png">resources/icons/ic_logo_hub.png</file>
+        <file alias="ic_logo_musd.png">resources/icons/ic_logo_musd.png</file>
+        <file alias="ic_logo_usdc.png">resources/icons/ic_logo_usdc.png</file>
+        <file alias="ic_logo_usdt.png">resources/icons/ic_logo_usdt.png</file>
+    </qresource>
+    <qresource prefix="/fonts">
+        <file>resources/fonts/_inter_black.ttf</file>
+        <file>resources/fonts/_inter_black_italic.ttf</file>
+        <file>resources/fonts/_inter_bold.ttf</file>
+        <file>resources/fonts/_inter_extra_bold.ttf</file>
+        <file>resources/fonts/_inter_extra_bold_italic.ttf</file>
+        <file>resources/fonts/_inter_bold_italic.ttf</file>
+        <file>resources/fonts/_inter_extra_light_italic.ttf</file>
+        <file>resources/fonts/_inter_extra_light.ttf</file>
+        <file>resources/fonts/_inter_italic.ttf</file>
+        <file>resources/fonts/_inter_light_italic.ttf</file>
+        <file>resources/fonts/_inter_light.ttf</file>
+        <file>resources/fonts/_inter_medium_italic.ttf</file>
+        <file>resources/fonts/_inter_medium.ttf</file>
+        <file>resources/fonts/_inter_regular.ttf</file>
+        <file>resources/fonts/_inter_semi_bold_italic.ttf</file>
+        <file>resources/fonts/_inter_semi_bold.ttf</file>
+        <file>resources/fonts/_inter_thin_italic.ttf</file>
+        <file>resources/fonts/_inter_thin.ttf</file>
+        <file>resources/fonts/_ubuntu_mono_bold_italic.ttf</file>
+        <file>resources/fonts/_ubuntu_mono_bold.ttf</file>
+        <file>resources/fonts/_ubuntu_mono_italic.ttf</file>
+        <file>resources/fonts/_ubuntu_mono_regular.ttf</file>
+    </qresource>
+</RCC>

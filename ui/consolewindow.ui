@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+    <class>ConsoleWindow</class>
+    <widget class="QMainWindow" name="ConsoleWindow">
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>894</width>
+                <height>723</height>
+            </rect>
+        </property>
+        <property name="windowTitle">
+            <string>Minter Console</string>
+        </property>
+        <widget class="QWidget" name="centralwidget">
+            <layout class="QGridLayout" name="gridLayout">
+                <item row="0" column="0">
+                    <layout class="QHBoxLayout" name="horizontalLayout">
+                        <property name="topMargin">
+                            <number>8</number>
+                        </property>
+                        <property name="bottomMargin">
+                            <number>8</number>
+                        </property>
+                        <item>
+                            <widget class="QLabel" name="label">
+                                <property name="text">
+                                    <string>Run server to communicate with other apps</string>
+                                </property>
+                            </widget>
+                        </item>
+                        <item>
+                            <widget class="QPushButton" name="pushButton">
+                                <property name="enabled">
+                                    <bool>false</bool>
+                                </property>
+                                <property name="text">
+                                    <string>Run (unavailable yet)</string>
+                                </property>
+                            </widget>
+                        </item>
+                    </layout>
+                </item>
+                <item row="2" column="0">
+                    <layout class="QVBoxLayout" name="verticalLayout">
+                        <item>
+                            <widget class="QTabWidget" name="tabWidget">
+                                <property name="tabPosition">
+                                    <enum>QTabWidget::North</enum>
+                                </property>
+                                <property name="tabShape">
+                                    <enum>QTabWidget::Rounded</enum>
+                                </property>
+                                <property name="currentIndex">
+                                    <number>-1</number>
+                                </property>
+                                <property name="iconSize">
+                                    <size>
+                                        <width>24</width>
+                                        <height>24</height>
+                                    </size>
+                                </property>
+                            </widget>
+                        </item>
+                    </layout>
+                </item>
+                <item row="1" column="0">
+                    <layout class="QGridLayout" name="layoutBalance"/>
+                </item>
+            </layout>
+        </widget>
+        <widget class="QStatusBar" name="statusBar"/>
+    </widget>
+    <resources/>
+    <connections/>
+</ui>

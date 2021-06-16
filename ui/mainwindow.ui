@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+    <class>MainWindow</class>
+    <widget class="QMainWindow" name="MainWindow">
+        <property name="windowModality">
+            <enum>Qt::NonModal</enum>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>676</width>
+                <height>313</height>
+            </rect>
+        </property>
+        <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+            </sizepolicy>
+        </property>
+        <property name="windowTitle">
+            <string>Miledger - Connecting</string>
+        </property>
+        <widget class="QWidget" name="centralwidget">
+            <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <layout class="QGridLayout" name="gridLayout">
+                <item row="0" column="0">
+                    <layout class="QVBoxLayout" name="verticalLayout_2">
+                        <item>
+                            <widget class="QLabel" name="label_2">
+                                <property name="text">
+                                    <string>&lt;html&gt;
+                                        &lt;head/&gt;
+                                        &lt;body style=&quot;&quot;&gt;
+                                        &lt;dl&gt;
+                                        &lt;dt&gt;&lt;b&gt;1. Connecting.&lt;/b&gt;
+                                        &lt;dd&gt;Connect &lt;span style=&quot; font-weight:600;&quot;&gt;Ledger Nano S&lt;/span&gt;
+                                        with firmware 1.6.x to computer via USB&lt;/dd&gt;
+                                        &lt;/dt&gt;
+                                        &lt;dt&gt;&lt;b&gt;2. Initialize your device.&lt;/b&gt;
+                                        &lt;dd&gt;Initialize device using 12-words seed phrase (&lt;a href=&quot;https://support.ledger.com/hc/en-us/articles/360005434914-Restore-from-recovery-phrase&quot;&gt;help
+                                        link&lt;/a&gt;) or just unlock Ledger using your &lt;span style=&quot;
+                                        font-weight:600;&quot;&gt;PIN-code&lt;/span&gt;&lt;/dd&gt;
+                                        &lt;/dt&gt;
+                                        &lt;dt&gt;&lt;b&gt;3. Minter App&lt;/b&gt;
+                                        &lt;dd&gt;If you have already installed Minter App, just open it and click below
+                                        &amp;quot;&lt;span style=&quot; font-weight:600;&quot;&gt;Open Console&lt;/span&gt;&amp;quot;&lt;/dd&gt;
+                                        &lt;dd&gt;If you didn't, then click &amp;quot;&lt;span style=&quot;
+                                        font-weight:600;&quot;&gt;Install Wallet to Ledger&lt;/span&gt;&amp;quot; and
+                                        follow instructions&lt;/dd&gt;
+                                        &lt;/dt&gt;
+                                        &lt;/dl&gt;
+                                        &lt;/body&gt;
+                                        &lt;/html&gt;
+                                    </string>
+                                </property>
+                                <property name="wordWrap">
+                                    <bool>true</bool>
+                                </property>
+                            </widget>
+                        </item>
+                    </layout>
+                </item>
+                <item row="1" column="0">
+                    <layout class="QVBoxLayout" name="verticalLayout">
+                        <item>
+                            <widget class="QLabel" name="labelConnecting">
+                                <property name="sizePolicy">
+                                    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="minimumSize">
+                                    <size>
+                                        <width>320</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                                <property name="text">
+                                    <string>Waiting for device...</string>
+                                </property>
+                                <property name="textFormat">
+                                    <enum>Qt::PlainText</enum>
+                                </property>
+                                <property name="scaledContents">
+                                    <bool>false</bool>
+                                </property>
+                                <property name="wordWrap">
+                                    <bool>true</bool>
+                                </property>
+                            </widget>
+                        </item>
+                        <item>
+                            <widget class="QProgressBar" name="progressConnecting">
+                                <property name="maximum">
+                                    <number>0</number>
+                                </property>
+                                <property name="value">
+                                    <number>0</number>
+                                </property>
+                                <property name="textVisible">
+                                    <bool>false</bool>
+                                </property>
+                            </widget>
+                        </item>
+                    </layout>
+                </item>
+                <item row="2" column="0">
+                    <layout class="QHBoxLayout" name="horizontalLayout">
+                        <property name="sizeConstraint">
+                            <enum>QLayout::SetMaximumSize</enum>
+                        </property>
+                        <item>
+                            <widget class="QPushButton" name="btnInstall">
+                                <property name="enabled">
+                                    <bool>true</bool>
+                                </property>
+                                <property name="text">
+                                    <string>Install Wallet to Ledger</string>
+                                </property>
+                            </widget>
+                        </item>
+                        <item>
+                            <widget class="QPushButton" name="btnWallet">
+                                <property name="enabled">
+                                    <bool>true</bool>
+                                </property>
+                                <property name="text">
+                                    <string>Open Console</string>
+                                </property>
+                            </widget>
+                        </item>
+                    </layout>
+                </item>
+            </layout>
+        </widget>
+    </widget>
+    <resources/>
+    <connections/>
+</ui>

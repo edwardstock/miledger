@@ -1,0 +1,1 @@
+C:\Users\edwar\projects\projects\cpp\miledger\install\python\win32\python.exe -m ledgerblue.loadApp --apdu --appFlags 0x40 --path "44'/60'" --curve secp256k1 --tlv --targetId 0x31100004 --delete --fileName ./bin/app.hex --appName Minter --appVersion 0.1.0 --dataSize 0 --icon 0100000000ffffff00ffffffffffffe7ebcfe99fec37e667e7e7e7e7e7e7e7e7e7e7e7ffffffffffff
