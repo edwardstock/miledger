@@ -6,3 +6,6 @@ CMakeLists.txt.user*
 install/ledger/build
 version.h
 include/miledger-config.h
+_build
+qt_conan.py
+install/ledger/__pycache__

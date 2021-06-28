@@ -22,6 +22,6 @@ jobs:
       - name: Build & Package
         run: bash cfg/package_make.sh -t appimage
       - name: Publish
-      - uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v2
         with:
           path: _build/*.AppImage
