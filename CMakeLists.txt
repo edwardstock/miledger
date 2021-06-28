@@ -1,20 +1,34 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.18)
 
 project(miledger
         LANGUAGES CXX
-        VERSION 0.1.0
+        VERSION 0.1.1
         DESCRIPTION "Minter desktop console"
         )
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/modules)
+
 
 include(ConanInit)
 add_conan_remote(minter https://minter.jfrog.io/artifactory/api/conan/conan)
 add_conan_remote(edwardstock https://edwardstock.jfrog.io/artifactory/api/conan/conan)
 conan_init()
 
-include(penv_generator)
+list(APPEND CMAKE_MODULE_PATH "${CONAN_QT_ROOT}/lib/cmake/Qt5Widgets")
+list(APPEND CMAKE_PREFIX_PATH "${CONAN_QT_ROOT}/lib/cmake")
+
+
+include(Qt5WidgetsMacros)
 include(compilers_flags)
+include(penv_generator)
+include(CheckIncludeFileCXX)
+
+check_include_file_cxx("optional" HAVE_CXX_OPTIONAL)
+
+include(${CONAN_QT_ROOT}/lib/cmake/Qt5Core/conan_qt_executables_variables.cmake)
+
+set(QT_CONF_PREFIX "${CONAN_QT_ROOT}")
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cfg/qt.in.conf ${CMAKE_BINARY_DIR}/bin/qt.conf)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -23,13 +37,12 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(Qt6_USE_STATIC_LIBS ON)
-set(Qt6_USE_STATIC_RUNTIME ON)
 
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets Network Concurrent REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Network Concurrent REQUIRED)
+#find_package(QT NAMES Qt5 Qt6 HINTS ${CONAN_QT_ROOT} COMPONENTS Core Widgets Network Concurrent REQUIRED)
+#find_package(Qt${QT_VERSION_MAJOR} HINTS ${CONAN_QT_ROOT} COMPONENTS Core Widgets Network Concurrent REQUIRED)
+
+#message(STATUS "Qt${QT_VERSION_MAJOR} Dir: ${Qt${QT_VERSION_MAJOR}_DIR}")
 
 
 if (WIN32)
@@ -45,6 +58,9 @@ set(LEDGER_APP_VERSION "0.1.0")
 if (APPLE)
 	set(MILEDGER_APPLE 1)
 	set(CMAKE_MACOSX_BUNDLE ON)
+endif ()
+if (UNIX AND NOT APPLE)
+	set(MILEDGER_LINUX 1)
 endif ()
 
 add_definitions(-DCPR_CURL_NOSIGNAL=1)
@@ -89,6 +105,9 @@ if (WIN32)
 endif ()
 
 
+set(QT_UIC_EXECUTABLE "${CONAN_BIN_DIRS_QT}/uic")
+set(QT_MOC_EXECUTABLE "${CONAN_BIN_DIRS_QT}/moc")
+
 set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/resources.rc")
 
 set(UI_RESOURCES
@@ -103,7 +122,9 @@ set(UI_SOURCES
     ui/testwindow.ui
     )
 
-qt_wrap_ui(UI_HEADERS ${UI_SOURCES})
+qt5_wrap_ui(UI_HEADERS ${UI_SOURCES})
+message(STATUS "UI Sources: ${UI_HEADERS}")
+message(STATUS "UI Sources: ${UI_SOURCES}")
 
 set(PROJECT_SOURCES
     ${UI_HEADERS}
@@ -164,7 +185,7 @@ set(PROJECT_SOURCES
     include/style_helper.h
     include/settings.h
     src/settings.cpp
-    )
+    include/optional.hpp)
 
 if (WIN32)
 	set(PROJECT_SOURCES
@@ -191,9 +212,9 @@ endif ()
 if (WIN32 AND PACKAGING)
 	add_executable(${PROJECT_NAME} WIN32 ${PROJECT_SOURCES})
 else ()
-	qt_add_executable(${PROJECT_NAME}
-	                  ${PROJECT_SOURCES}
-	                  )
+	#if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+	add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
+
 endif ()
 
 
@@ -231,12 +252,19 @@ if (APPLE)
 		                      MACOSX_BUNDLE_INFO_PLIST "${CMAKE_BINARY_DIR}/Info.plist"
 		                      )
 	endif ()
-
 endif ()
 
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Network)
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Concurrent)
+#target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+#target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Network)
+#target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Concurrent)
+
+#target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Core)
+#target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Widgets)
+#target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Network)
+#target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Concurrent)
+
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -L${CONAN_QT_ROOT}/bin/archdatadir/plugins/platforms")
+#target_link_libraries(${PROJECT_NAME} PRIVATE qxcb)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE CONAN_PKG::mhwallet)
 target_link_libraries(${PROJECT_NAME} PRIVATE CONAN_PKG::minter_tx)
@@ -248,6 +276,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE CONAN_PKG::cpr)
 target_link_libraries(${PROJECT_NAME} PRIVATE CONAN_PKG::libcurl)
 target_link_libraries(${PROJECT_NAME} PRIVATE CONAN_PKG::libpng)
 target_link_libraries(${PROJECT_NAME} PRIVATE CONAN_PKG::fmt)
+target_link_libraries(${PROJECT_NAME} PRIVATE CONAN_PKG::qt)
 
 #include(material_widgets)
 #target_link_libraries(${PROJECT_NAME} PRIVATE qt_material)
@@ -276,12 +305,74 @@ if (PACKAGING)
 				COMMENT "Running windeployqt..."
 			)
 		endif ()
+	else ()
+		set(APPIMAGE_ROOT ${CMAKE_BINARY_DIR}/AppDir)
+		find_program(LINUXDEPLOYQT_EXECUTABLE linuxdeployqt NAMES linuxdeployqt.AppImage linuxdeployqt-continuous-x86_64.AppImage linuxdeployqt-7-x86_64.AppImage)
+
+		if (NOT APPIMAGE OR APPIMAGE STREQUAL "nofuse")
+			configure_file(
+				${CMAKE_CURRENT_SOURCE_DIR}/cfg/linux_deploy_qt_nofuse.sh
+				${CMAKE_BINARY_DIR}/linux_deploy_qt.sh
+				FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+				@ONLY)
+		else ()
+			configure_file(
+				${CMAKE_CURRENT_SOURCE_DIR}/cfg/linux_deploy_qt.sh
+				${CMAKE_BINARY_DIR}/linux_deploy_qt.sh
+				FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+				@ONLY)
+		endif ()
+
+
+		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cfg/desktop.ini ${APPIMAGE_ROOT}/usr/share/applications/${PROJECT_NAME}.desktop)
+		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cfg/desktop.ini ${APPIMAGE_ROOT}/${PROJECT_NAME}.desktop)
+		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/icon-512.png ${APPIMAGE_ROOT}/usr/share/icons/hicolor/512x512/apps/${PROJECT_NAME}.png COPYONLY)
+		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/icon-256.png ${APPIMAGE_ROOT}/usr/share/icons/hicolor/256x256/apps/${PROJECT_NAME}.png COPYONLY)
+		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/icon-256.png ${APPIMAGE_ROOT}/${PROJECT_NAME}.png COPYONLY)
+		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/icon-128.png ${APPIMAGE_ROOT}/usr/share/icons/hicolor/128x128/apps/${PROJECT_NAME}.png COPYONLY)
+		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/icon-64.png ${APPIMAGE_ROOT}/usr/share/icons/hicolor/64x64/apps/${PROJECT_NAME}.png COPYONLY)
+		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/icon-32.png ${APPIMAGE_ROOT}/usr/share/icons/hicolor/32x32/apps/${PROJECT_NAME}.png COPYONLY)
+		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/icon-16.png ${APPIMAGE_ROOT}/usr/share/icons/hicolor/16x16/apps/${PROJECT_NAME}.png COPYONLY)
+
+		#		include(install)
+		if (LINUXDEPLOYQT_EXECUTABLE)
+			message(STATUS "Found qt linux deploy: ${LINUXDEPLOYQT_EXECUTABLE}")
+			add_custom_command(
+				TARGET ${PROJECT_NAME}
+				POST_BUILD
+				COMMAND "${CMAKE_BINARY_DIR}/linux_deploy_qt.sh"
+				COMMENT "Running linuxdeployqt..."
+			)
+			#								add_custom_command(
+			#									TARGET ${PROJECT_NAME}
+			#									POST_BUILD
+			#									WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+			#									COMMAND ${CMAKE_COMMAND} -E env "LD_LIBRARY_PATH=$ENV{LD_LIBRARY_PATH}:${QTDIR}/lib"
+			#									"${LINUXDEPLOYQT_EXECUTABLE}"
+			#									"${APPIMAGE_ROOT}/usr/bin/${PROJECT_NAME}"
+			#									"-unsupported-allow-new-glibc"
+			#									"-appimage"
+			#									"-bundle-non-qt-libs"
+			#									"-always-overwrite"
+			#									"-bundle-non-qt-libs"
+			#									"-extra-plugins=iconengines,platforms,imageformats,platformthemes"
+			#									"-verbose=3"
+			#
+			#									COMMENT "Running linuxdeployqt..."
+			#								)
+			# linuxdeployqt AppDir/usr/share/applications/miledger.desktop -always-overwrite -unsupported-allow-new-glibc -appimage -bundle-non-qt-libs -extra-plugins=iconengines,platformthemes/libqgtk3.so
+			# VERSION=0.1.0 LD_LIBRARY_PATH=/home/edward/qt/lib:$LD_LIBRARY_PATH linuxdeployqt AppDir/usr/bin/miledger -always-overwrite -unsupported-allow-new-glibc -appimage -bundle-non-qt-libs -extra-plugins=iconengines,platforms,imageformats,platformthemes -verbose=3
+		else ()
+			message(FATAL_ERROR "linuxdeployqt NOT FOUND. Please download it https://github.com/probonopd/linuxdeployqt/releases")
+		endif ()
+
+		#-unsupported-allow-new-glibc
 	endif ()
 endif ()
 
 #get_cmake_property(_variableNames VARIABLES)
-#list (SORT _variableNames)
+#list(SORT _variableNames)
 #foreach (_variableName ${_variableNames})
-#	message(STATUS "VAR: ${_variableName}=${${_variableName}}")
-#endforeach()
+#		message(STATUS "VAR: ${_variableName}=${${_variableName}}")
+#endforeach ()
 

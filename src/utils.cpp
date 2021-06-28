@@ -8,6 +8,8 @@
  */
 #include "include/utils.h"
 
+#include <QDebug>
+#include <QDebugStateSaver>
 #include <QRandomGenerator>
 #include <minter/tx/utils.h>
 #include <toolbox/strings/decimal_formatter.h>
@@ -41,4 +43,35 @@ QString miledger::utils::getError(const std::exception_ptr& eptr) {
     } catch (const std::exception& e) {
         return QString(e.what());
     }
+}
+
+QDebug operator<<(QDebug debug, const dev::bigint& v) {
+    QDebugStateSaver saver(debug);
+    debug.nospace() << QString::fromStdString(minter::utils::to_string(v));
+    return debug;
+}
+QDebug operator<<(QDebug debug, const std::string& v) {
+    QDebugStateSaver saver(debug);
+    debug.nospace() << QString::fromStdString(v);
+    return debug;
+}
+QDebug operator<<(QDebug debug, const dev::bigdec18& v) {
+    QDebugStateSaver saver(debug);
+    debug.nospace() << miledger::utils::humanDecimal(v, 2, 18);
+    return debug;
+}
+QDebug operator<<(QDebug debug, const minter::explorer::coin_item& v) {
+    QDebugStateSaver saver(debug);
+    debug.nospace() << "Coin{id=" << v.id << " symbol=" << QString::fromStdString(v.symbol) << " type=" << v.type << "}";
+    return debug;
+}
+QDebug operator<<(QDebug debug, const minter::explorer::coin_item_base& v) {
+    QDebugStateSaver saver(debug);
+    debug.nospace() << "Coin{id=" << v.id << " symbol=" << QString::fromStdString(v.symbol) << " type=" << v.type << "}";
+    return debug;
+}
+QDebug operator<<(QDebug debug, const toolbox::data::bytes_data& v) {
+    QDebugStateSaver saver(debug);
+    debug.nospace() << QString::fromStdString(v.to_hex());
+    return debug;
 }

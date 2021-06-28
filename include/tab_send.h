@@ -77,8 +77,9 @@ private slots:
     void onInitDataUpdated(miledger::repo::tx_init_data);
     void onFormValidated(bool valid);
     void onSubmit();
-    void onUsePercentClicked(UsePercentAction action);
+    void onUsePercentClicked(Ui::TabSend::UsePercentAction action);
     void onPayloadChanged(const QString& fieldName, QString value);
+    void onAmountChanged(const QString& fieldName, QString value);
     void onGasCoinSelected(int index);
 
 private:
@@ -87,6 +88,7 @@ private:
     minter::explorer::balance_item currentAccount;
     dev::bigint gasCoin;
     miledger::InputGroup inputGroup;
+    bool useMax = false;
 
     rxcpp::observable<minter::gate::tx_send_result> sendTx();
 };

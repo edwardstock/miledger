@@ -10,6 +10,7 @@
 #ifndef MILEDGER_EXPLORER_REPO_H
 #define MILEDGER_EXPLORER_REPO_H
 
+#include "include/utils.h"
 #include "repository.h"
 
 #include <minter/api/explorer/explorer_results.h>
@@ -139,7 +140,7 @@ public:
     get_coin_by_id(const QString& coin_id) const;
 
 private:
-    std::unordered_map<reward_period, QString> m_reward_scales = {
+    std::unordered_map<reward_period, QString, enum_hasher> m_reward_scales = {
         {minute, "minute"},
         {hour, "hour"},
         {day, "day"},

@@ -1,6 +1,6 @@
 /*!
  * miledger.
- * form_validator.h
+ * input_group.h
  *
  * \date 2021
  * \author Eduard Maximovich (edward.vstock@gmail.com)
@@ -21,6 +21,7 @@
 #include <QRegularExpressionValidator>
 #include <QString>
 #include <fmt/format.h>
+#include <utility>
 
 namespace miledger {
 
@@ -31,11 +32,11 @@ struct InputGroupData {
     bool required;
     bool externalError = false;
 
-    void setError(QString error) {
+    void setError(const QString& error) {
         if (externalError) {
             errorView->setVisible(true);
         }
-        errorView->setText(std::move(error));
+        errorView->setText(error);
     }
     void clearError() {
         if (externalError) {
@@ -53,7 +54,7 @@ signals:
     void textChanged(QString, QString, bool);
 
 private slots:
-    void inputChanged(const QString& fieldName, QString value) {
+    void inputChanged(const QString& fieldName, const QString& value) {
         auto& item = inputs[fieldName];
         unsigned invalidCount = 0;
         for (const auto& v : item.validators) {
@@ -101,8 +102,8 @@ public:
         std::vector<miledger::BaseMinterValidator*> validators,
         bool required) {
 
-        InputGroupData data{input, validators, input->errorView, required, false};
-        this->connect(input, &BaseInputField::namedTextChanged, this, &InputGroup::inputChanged);
+        InputGroupData data{input, std::move(validators), input->errorView, required, false};
+        connect(input, &BaseInputField::namedTextChanged, this, &InputGroup::inputChanged);
         inputs.insert(input->getName(), std::move(data));
         inputData[input->getName()] = "";
         // by default, all required inputs are invalid
@@ -174,7 +175,7 @@ public:
                 validCount++;
             }
         }
-        return validCount == validStates.size();
+        return validCount == (unsigned int) validStates.size();
     }
 
     bool validate() {
@@ -188,9 +189,9 @@ public:
             }
         }
 
-        emit formValid(validCount == inputs.size());
+        emit formValid(validCount == (unsigned int) inputs.size());
 
-        return validCount == inputs.size();
+        return validCount == (unsigned int) inputs.size();
     }
 
     void reset() {
@@ -213,7 +214,7 @@ public:
         if (!inputs.contains(fieldName)) {
             return;
         }
-        inputs[fieldName].setError(error);
+        inputs[fieldName].setError(std::move(error));
     }
 
     const QHash<QString, QString>& getInputData() const {

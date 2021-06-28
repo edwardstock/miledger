@@ -10,6 +10,8 @@
 #ifndef ML_IO_CONTAINER_H
 #define ML_IO_CONTAINER_H
 
+#include "include/optional.hpp"
+
 #include <QCryptographicHash>
 #include <QDataStream>
 #include <QPair>
@@ -51,7 +53,7 @@ public:
             QCryptographicHash::Md5);
         Q_ASSERT(hash.size() == 16);
 
-        QDataStream stream(&hash, QDataStream::OpenModeFlag::ReadOnly);
+        QDataStream stream(&hash, QIODevice::OpenModeFlag::ReadOnly);
         qint64 a, b;
         stream >> a >> b;
         return a ^ b;
@@ -102,7 +104,7 @@ public:
     /// \brief Search for header and return row as pair: wss::web::KeyValue
     /// \param name string. Searching is case insensitive
     /// \return pair wss::web::KeyValue
-    std::optional<miledger::net::kv> find_header_pair(const QString& name) const;
+    optns::optional<miledger::net::kv> find_header_pair(const QString& name) const;
 
     /// \brief Search for header and return it value
     /// \param headerName string. Searching is case insensitive

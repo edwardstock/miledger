@@ -128,14 +128,16 @@ dev::bigdec18 miledger::repo::get_tx_fee_by_type(minter::gate::price_commissions
 }
 
 QString miledger::repo::tx_init_data::calc_fee_text(minter::tx_type_val tx_type, size_t payload_len) const {
+    auto payloadFee = minter::utils::humanize_value(dev::bigint(payload_len) * tx_fees.payload_byte);
+    auto gasDecimal = dev::bigdec18(gas);
     if (gas_representing_coin.id == minter::def_coin_id) {
-        auto fee = get_tx_fee_by_type(tx_fees, tx_type) * dev::bigdec18(gas) + minter::utils::humanize_value(dev::bigint(payload_len) * tx_fees.payload_byte);
+        auto fee = get_tx_fee_by_type(tx_fees, tx_type) * gasDecimal + payloadFee;
         return QString("%1 %2")
             .arg(
                 miledger::utils::humanDecimal(fee),
                 QString::fromStdString(gas_representing_coin.symbol));
     } else {
-        auto fee = get_tx_fee_by_type(tx_fees, tx_type) * dev::bigdec18(gas) + minter::utils::humanize_value(dev::bigint(payload_len) * tx_fees.payload_byte);
+        auto fee = get_tx_fee_by_type(tx_fees, tx_type) * gasDecimal + payloadFee;
         return QString("%1 %2 (%3 %4)")
             .arg(
                 miledger::utils::humanDecimal((fee * gas_base_coin_rate)),
@@ -288,8 +290,7 @@ miledger::repo::gate_repo::get_tx_init_data(const minter::address_t& address) {
 
             if (init_data.gas_representing_coin.id != minter::def_coin_id) {
                 auto tx_fee = get_base_tx_fee().as_blocking().first();
-                // initData.gasBaseCoinRate = it.result.getValue() / initData.priceCommissions.getByType(OperationType.SendCoin).humanizeDecimal()
-                init_data.gas_base_coin_rate = minter::utils::humanize_value(tx_fee.value / init_data.tx_fees.send);
+                init_data.gas_base_coin_rate = minter::utils::humanize_value(tx_fee.value) / minter::utils::humanize_value(init_data.tx_fees.send);
             }
 
             return init_data;

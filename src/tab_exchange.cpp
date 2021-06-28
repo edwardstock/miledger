@@ -172,8 +172,8 @@ rxcpp::observable<minter::gate::tx_send_result> Ui::TabExchange::createTxSender(
                         emit progressLabelChanged(QString("Please compare transaction hash and approve it: \n%1").arg(QString::fromStdString(rawTx.to_hex())));
                         signature = app->dev.signTx(rawTx);
                         emit progressLabelChanged("Sending transaction...");
-                    } catch (std::exception e) {
-                        emitter.on_error(std::make_exception_ptr(std::move(e)));
+                    } catch (const std::exception& e) {
+                        emitter.on_error(std::make_exception_ptr(std::runtime_error(e.what())));
                         return;
                     }
 

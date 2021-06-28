@@ -19,37 +19,6 @@
 #include <cpr/cpr.h>
 #include <fstream>
 
-QDebug operator<<(QDebug debug, const dev::bigint& v) {
-    QDebugStateSaver saver(debug);
-    debug.nospace() << QString::fromStdString(minter::utils::to_string(v));
-    return debug;
-}
-QDebug operator<<(QDebug debug, const std::string& v) {
-    QDebugStateSaver saver(debug);
-    debug.nospace() << QString::fromStdString(v);
-    return debug;
-}
-QDebug operator<<(QDebug debug, const dev::bigdec18& v) {
-    QDebugStateSaver saver(debug);
-    debug.nospace() << QString::fromStdString(minter::utils::to_string(v));
-    return debug;
-}
-QDebug operator<<(QDebug debug, const coin_item& v) {
-    QDebugStateSaver saver(debug);
-    debug.nospace() << "Coin{id=" << v.id << " symbol=" << QString::fromStdString(v.symbol) << " type=" << v.type << "}";
-    return debug;
-}
-QDebug operator<<(QDebug debug, const coin_item_base& v) {
-    QDebugStateSaver saver(debug);
-    debug.nospace() << "Coin{id=" << v.id << " symbol=" << QString::fromStdString(v.symbol) << " type=" << v.type << "}";
-    return debug;
-}
-QDebug operator<<(QDebug debug, const toolbox::data::bytes_data& v) {
-    QDebugStateSaver saver(debug);
-    debug.nospace() << QString::fromStdString(v.to_hex());
-    return debug;
-}
-
 miledger::ConsoleApp::ConsoleApp(QObject* parent)
     : QObject(parent),
       devThread(),
@@ -199,14 +168,14 @@ const QHash<QString, minter::explorer::coin_item*>& miledger::ConsoleApp::getCoi
     std::lock_guard<std::mutex> lock(mCoinsLock);
     return coinsIndex;
 }
-std::optional<minter::explorer::coin_item*> miledger::ConsoleApp::findCoinBySymbol(const QString& symbol) const {
+optns::optional<minter::explorer::coin_item*> miledger::ConsoleApp::findCoinBySymbol(const QString& symbol) const {
     std::lock_guard<std::mutex> lock(mCoinsLock);
     if (coinsIndex.contains(symbol.toUpper())) {
         return coinsIndex.value(symbol.toUpper());
     }
     return {};
 }
-std::optional<minter::explorer::coin_item*> miledger::ConsoleApp::findCoinBySymbol(const std::string& symbol) const {
+optns::optional<minter::explorer::coin_item*> miledger::ConsoleApp::findCoinBySymbol(const std::string& symbol) const {
     return findCoinBySymbol(QString::fromStdString(symbol));
 }
 bool miledger::ConsoleApp::hasCoinIcon(const QString& idString) {

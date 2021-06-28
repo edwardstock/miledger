@@ -31,7 +31,6 @@
 #include <QStandardItemModel>
 #include <QStringList>
 #include <memory>
-#include <optional>
 
 namespace Ui {
 

@@ -11,6 +11,7 @@
 #define MILEDGER_UTILS_H
 
 #include <QString>
+#include <minter/api/explorer/explorer_results.h>
 #include <minter/minter_tx_config.h>
 
 namespace miledger {
@@ -23,5 +24,19 @@ QString getError(const std::exception_ptr& eptr);
 
 } // namespace utils
 } // namespace miledger
+
+struct enum_hasher {
+    template<typename T>
+    std::size_t operator()(T t) const {
+        return static_cast<std::size_t>(t);
+    }
+};
+
+QDebug operator<<(QDebug debug, const dev::bigint& v);
+QDebug operator<<(QDebug debug, const std::string& v);
+QDebug operator<<(QDebug debug, const dev::bigdec18& v);
+QDebug operator<<(QDebug debug, const minter::explorer::coin_item& v);
+QDebug operator<<(QDebug debug, const minter::explorer::coin_item_base& v);
+QDebug operator<<(QDebug debug, const toolbox::data::bytes_data& v);
 
 #endif // MILEDGER_UTILS_H

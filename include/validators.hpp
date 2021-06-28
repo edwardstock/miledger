@@ -178,7 +178,7 @@ public:
           m_maxLength(maxLength) {
     }
     State validate(QString& string, int&) const override {
-        if (string.length() > m_maxLength) {
+        if ((unsigned int) string.length() > m_maxLength) {
             return Invalid;
         }
 

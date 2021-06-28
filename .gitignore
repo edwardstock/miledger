@@ -2,6 +2,7 @@
 venv
 cmake-build-*
 *.autosave
-CMakeLists.txt.user.*
+CMakeLists.txt.user*
 install/ledger/build
 version.h
+include/miledger-config.h

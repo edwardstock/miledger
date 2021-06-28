@@ -244,9 +244,9 @@ explorer_repo::get_pool_estimate(
     req.add_query(net::kv("amount", QString::fromStdString(minter::utils::normalize_value(amount).str())));
 
     if (swap_type == buy) {
-        req.add_query(std::pair<QString, QString>("type", "output"));
+        req.add_query(QPair<QString, QString>("type", "output"));
     } else {
-        req.add_query(std::pair<QString, QString>("type", "input"));
+        req.add_query(QPair<QString, QString>("type", "input"));
     }
 
     return MAKE_TASK_ROOT(pool_route, req);

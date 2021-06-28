@@ -13,6 +13,7 @@
 #include "device_looper.h"
 #include "net/explorer_repo.h"
 #include "net/gate_repo.h"
+#include "optional.hpp"
 #include "rxqt_instance.hpp"
 
 #include <QIcon>
@@ -24,8 +25,8 @@
 #include <mutex>
 #include <vector>
 
-Q_DECLARE_METATYPE(minter::explorer::coin_item);
-Q_DECLARE_METATYPE(minter::explorer::coin_item_base);
+Q_DECLARE_METATYPE(minter::explorer::coin_item)
+Q_DECLARE_METATYPE(minter::explorer::coin_item_base)
 
 namespace miledger {
 
@@ -58,8 +59,8 @@ public:
 
     const std::vector<minter::explorer::coin_item>& getCoins() const;
     const QHash<QString, minter::explorer::coin_item*>& getCoinsIndex() const;
-    std::optional<minter::explorer::coin_item*> findCoinBySymbol(const QString& symbol) const;
-    std::optional<minter::explorer::coin_item*> findCoinBySymbol(const std::string& symbol) const;
+    optns::optional<minter::explorer::coin_item*> findCoinBySymbol(const QString& symbol) const;
+    optns::optional<minter::explorer::coin_item*> findCoinBySymbol(const std::string& symbol) const;
 
     bool hasCoinIcon(const QString& idString);
     bool hasCoinIcon(const dev::bigint& id);
@@ -103,12 +104,5 @@ private:
 };
 
 } // namespace miledger
-
-QDebug operator<<(QDebug debug, const dev::bigint& v);
-QDebug operator<<(QDebug debug, const std::string& v);
-QDebug operator<<(QDebug debug, const dev::bigdec18& v);
-QDebug operator<<(QDebug debug, const minter::explorer::coin_item& v);
-QDebug operator<<(QDebug debug, const minter::explorer::coin_item_base& v);
-QDebug operator<<(QDebug debug, const toolbox::data::bytes_data& v);
 
 #endif // MILEDGER_CONSOLE_APP_H

@@ -1,6 +1,6 @@
 /*!
  * miledger.
- * Imager.h
+ * image_cache.h
  *
  * \date 2021
  * \author Eduard Maximovich (edward.vstock@gmail.com)
@@ -387,9 +387,9 @@ public:
         return QString("coin_avatar_%1").arg(coinSymbol);
     }
 
-    QFile fileFromKey(const QString& key) {
-        return QFile(filePathForKey(key));
-    }
+    //    QFile fileFromKey(const QString& key) {
+    //        return QFile(filePathForKey(key));
+    //    }
 
     bool exist(const minter::explorer::coin_item& coin, bool preload = true) {
         return exist(keyForCoin(coin), preload);
@@ -404,7 +404,7 @@ public:
         if (contains) {
             return true;
         } else {
-            QFile image = fileFromKey(key);
+            QFile image(filePathForKey(key));
             if (!image.exists()) {
                 ;
                 return false;

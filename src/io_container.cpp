@@ -47,8 +47,8 @@ bool miledger::net::io_container::has_header(const QString& name) const {
     return false;
 }
 
-std::optional<miledger::net::kv> miledger::net::io_container::find_header_pair(const QString& name) const {
-    std::optional<miledger::net::kv> out;
+optns::optional<miledger::net::kv> miledger::net::io_container::find_header_pair(const QString& name) const {
+    optns::optional<miledger::net::kv> out;
     for (auto& h : m_headers) {
         if (QString::compare(h.first, name, Qt::CaseInsensitive)) {
             out = h;

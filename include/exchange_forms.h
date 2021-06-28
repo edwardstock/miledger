@@ -15,6 +15,7 @@
 #include "exchange_calculator.h"
 #include "input_fields.hpp"
 #include "input_group.h"
+#include "optional.hpp"
 #include "rxqt_instance.hpp"
 #include "utils.h"
 #include "validators.hpp"
@@ -88,7 +89,7 @@ public:
         delete groupBox;
     }
 
-    std::optional<minter::explorer::balance_item> findBalanceByCoin(const dev::bigint& coinId) const {
+    optns::optional<minter::explorer::balance_item> findBalanceByCoin(const dev::bigint& coinId) const {
         for (const auto& balance : balances) {
             if (balance.coin.id == coinId) {
                 return balance;
@@ -98,7 +99,7 @@ public:
         return {};
     }
 
-    std::optional<minter::explorer::balance_item> findBalanceByCoin(const minter::explorer::coin_item_base& coin) const {
+    optns::optional<minter::explorer::balance_item> findBalanceByCoin(const minter::explorer::coin_item_base& coin) const {
         return findBalanceByCoin(coin.id);
     }
 
@@ -232,7 +233,7 @@ public slots:
                 },
                 [this](std::exception_ptr e) {
                     try {
-                        rethrow_exception(e);
+                        std::rethrow_exception(e);
                     } catch (const std::exception& e) {
                         inputGroup.setError(inputEstimate->getName(), e);
                         qDebug() << e.what();
@@ -338,7 +339,7 @@ public slots:
                 },
                 [this](std::exception_ptr e) {
                     try {
-                        rethrow_exception(e);
+                        std::rethrow_exception(e);
                     } catch (const std::exception& e) {
                         inputGroup.setError(inputEstimate->getName(), e);
                         qDebug() << e.what();
@@ -439,7 +440,7 @@ public slots:
                 },
                 [this](std::exception_ptr e) {
                     try {
-                        rethrow_exception(e);
+                        std::rethrow_exception(e);
                     } catch (const std::exception& e) {
                         inputGroup.setError(inputEstimate->getName(), e);
                         qDebug() << e.what();

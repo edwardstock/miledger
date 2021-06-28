@@ -101,6 +101,7 @@ void ConsoleWindow::closeEvent(QCloseEvent* event) {
 
 void ConsoleWindow::updateBalance() {
     app->updateBalance();
+    app->updateInitData();
 }
 
 void ConsoleWindow::balanceUpdated(explorer::balance_items balances) {

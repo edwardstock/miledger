@@ -241,7 +241,7 @@ public:
     /// \param key
     /// \param icase
     /// \return
-    std::optional<miledger::net::kv> find_query(const QString& key, bool icase = true) const;
+    optns::optional<miledger::net::kv> find_query(const QString& key, bool icase = true) const;
 
     /// \brief Set query param with value
     /// \param key query parameter name

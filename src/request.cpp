@@ -77,7 +77,7 @@ void miledger::net::base_request::parse_url(const QString& url) {
         return;
     }
 
-    auto res = toolbox::strings::find_pattern(std::regex(urlParseRegex.toStdString()), url.toStdString());
+    auto res = toolbox::strings::find_pattern(rxns::regex(urlParseRegex.toStdString()), url.toStdString());
 
     m_proto = QString::fromStdString(res[1]);
     m_host = QString::fromStdString(res[2]);
@@ -116,9 +116,9 @@ void miledger::net::base_request::parse_query(const QString& query_string) {
 
     for (const auto& param : pairs) {
         auto res = toolbox::strings::split_pair(param, "=");
-        add_query(std::pair<QString, QString>(
-            QString::fromStdString(std::move(res.first)),
-            QString::fromStdString(std::move(res.second))));
+        add_query(QPair<QString, QString>(
+            QString::fromStdString(res.first),
+            QString::fromStdString(res.second)));
     }
 }
 
@@ -257,8 +257,8 @@ QString miledger::net::base_request::get_query_value(const QString& key, bool ic
     return QString();
 }
 
-std::optional<miledger::net::kv> miledger::net::base_request::find_query(const QString& key, bool icase) const {
-    std::optional<miledger::net::kv> out;
+optns::optional<miledger::net::kv> miledger::net::base_request::find_query(const QString& key, bool icase) const {
+    optns::optional<miledger::net::kv> out;
     const auto& cmp = [icase](const QString& lhs, const QString& rhs) {
         return QString::compare(lhs, rhs, icase ? Qt::CaseInsensitive : Qt::CaseSensitive);
     };

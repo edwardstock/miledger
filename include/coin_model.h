@@ -13,6 +13,7 @@
 #include "include/miledger-config.h"
 
 #include <QAbstractListModel>
+#include <QDebug>
 #include <minter/api/explorer/explorer_results.h>
 #include <vector>
 

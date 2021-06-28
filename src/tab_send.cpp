@@ -119,12 +119,15 @@ Ui::TabSend::TabSend(miledger::ConsoleApp* app, QWidget* parent)
         onUsePercentClicked(Full);
     });
 
+    // clang-format off
     connect(inputCoin, SIGNAL(currentIndexChanged(int)), this, SLOT(onCoinSelected(int)));
     connect(inputGasCoin, SIGNAL(currentIndexChanged(int)), this, SLOT(onGasCoinSelected(int)));
     connect(inputPayload, &BaseInputField::namedTextChanged, this, &TabSend::onPayloadChanged);
+    connect(inputAmount, &BaseInputField::namedTextChanged, this, &TabSend::onAmountChanged);
 
     connect(app, SIGNAL(balanceUpdated(minter::explorer::balance_items)), this, SLOT(onBalanceUpdated(minter::explorer::balance_items)));
     connect(app, SIGNAL(initDataUpdated(miledger::repo::tx_init_data)), this, SLOT(onInitDataUpdated(miledger::repo::tx_init_data)));
+    // clang-format on
 }
 
 Ui::TabSend::~TabSend() {
@@ -150,6 +153,7 @@ void Ui::TabSend::onUsePercentClicked(Ui::TabSend::UsePercentAction action) {
     case Full:
         inputAmount->input->setText(QString::fromStdString(
             (currentAccount.amount).format(".18f")));
+        useMax = true;
         break;
     }
 }
@@ -267,6 +271,10 @@ rxcpp::observable<gate::tx_send_result> Ui::TabSend::sendTx() {
 
 void Ui::TabSend::onPayloadChanged(const QString&, QString value) {
     calculateFee(value.toLocal8Bit().size());
+}
+
+void Ui::TabSend::onAmountChanged(const QString& fieldName, QString value) {
+    useMax = false;
 }
 
 void Ui::TabSend::onInitDataUpdated(miledger::repo::tx_init_data) {

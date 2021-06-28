@@ -1,6 +1,6 @@
 /*!
- * miledger-qt.
- * DevSearchThread.cpp
+ * miledger.
+ * device_looper.cpp
  *
  * \date 2021
  * \author Eduard Maximovich (edward.vstock@gmail.com)
@@ -139,7 +139,11 @@ rxcpp::observable<bool> DeviceLooper::checkMinterAppInstalled() {
 rxcpp::observable<bool> DeviceLooper::openMinterApp() {
     return rxcpp::observable<>::create<bool>([this](rxcpp::subscriber<bool> emitter) {
         try {
-            auto apps = m_wallet.run_app("Minter");
+            auto appPid = m_wallet.run_app("Minter");
+            if (appPid != 0) {
+                Settings::get().set(Settings::KEY_MINTER_PID, appPid);
+            }
+
             emitter.on_next(true);
             emitter.on_completed();
         } catch (const std::exception& e) {

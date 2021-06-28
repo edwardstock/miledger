@@ -1,6 +1,6 @@
 /*!
  * miledger.
- * named_inputs.hpp
+ * input_fields.hpp
  *
  * \date 2021
  * \author Eduard Maximovich (edward.vstock@gmail.com)
@@ -51,8 +51,13 @@ private:
 public:
     CoinItemViewDelegate(miledger::ConsoleApp* app)
         : app(app),
+#ifndef MILEDGER_LINUX
           m_font("Inter", 14, 600),
           m_fontSub("Inter", 12, 400),
+#else
+          m_font("Inter", 10, 600),
+          m_fontSub("Inter", 8, 400),
+#endif
           m_fm(m_font),
           m_fmSub(m_fontSub),
           m_iconSize(26, 26),
@@ -429,7 +434,7 @@ public:
         : BaseInputField(std::move(name), "", parent),
           input(new QComboBox(this)) {
         setupViews();
-        connect(input, &QComboBox::activated, [this](int index) {
+        connect(input, qOverload<int>(&QComboBox::activated), [this](int index) {
             emitFromIndex(index);
         });
     }
@@ -437,7 +442,7 @@ public:
         : BaseInputField(std::move(name), std::move(placeholder), parent),
           input(new QComboBox(this)) {
         setupViews();
-        connect(input, &QComboBox::activated, [this](int index) {
+        connect(input, qOverload<int>(&QComboBox::activated), [this](int index) {
             emitFromIndex(index);
         });
     }
@@ -445,7 +450,7 @@ public:
         : BaseInputField(std::move(name), label, errorView, parent),
           input(new QComboBox(this)) {
         setupViews();
-        connect(input, &QComboBox::activated, [this](int index) {
+        connect(input, qOverload<int>(&QComboBox::activated), [this](int index) {
             emitFromIndex(index);
         });
     }
@@ -453,7 +458,7 @@ public:
         : BaseInputField(std::move(name), placeholder, label, errorView, parent),
           input(new QComboBox(this)) {
         setupViews();
-        connect(input, &QComboBox::activated, [this](int index) {
+        connect(input, qOverload<int>(&QComboBox::activated), [this](int index) {
             emitFromIndex(index);
         });
     }

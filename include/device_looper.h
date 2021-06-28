@@ -1,12 +1,11 @@
 /*!
- * miledger-qt.
- * DevSearchThread.h
+ * miledger.
+ * device_looper.h
  *
  * \date 2021
  * \author Eduard Maximovich (edward.vstock@gmail.com)
  * \link   https://github.com/edwardstock
  */
-
 #ifndef MILEDGER_QT_DEVICEHANDLER_H
 #define MILEDGER_QT_DEVICEHANDLER_H
 
@@ -60,7 +59,7 @@ private:
     std::atomic_bool m_skipConnectionCheck;
     std::atomic_bool m_infiniteEmitting;
     std::atomic_bool m_appOpened;
-    std::atomic_uint16_t m_appPid;
+    std::atomic<uint16_t> m_appPid;
 };
 
 #endif // MILEDGER_QT_DEVICEHANDLER_H

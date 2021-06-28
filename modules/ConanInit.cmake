@@ -11,7 +11,7 @@ function (add_conan_remote NAME URL)
 		OUTPUT_VARIABLE CONAN_ADD_REMOTE_OUT
 		RESULT_VARIABLE CONAN_ADD_REMOTE_RES
 	)
-	message(STATUS "Conan: ${CONAN_BIN} remote add -f ${NAME} ${URL}")
+	message(STATUS "Conan: ${CONAN_BIN} remote add ${NAME} ${URL}")
 
 	if (CONAN_ADD_REMOTE_ERR)
 		message(STATUS "Conan: Add remote error: ${CONAN_ADD_REMOTE_ERR}")
@@ -28,15 +28,28 @@ endfunction ()
 
 macro (conan_init)
 	include(ConanBuild)
-	conan_cmake_run(
-		CONANFILE conanfile.txt
-		BUILD missing
-		BASIC_SETUP
-	)
+	if (NO_OUTPUT_DIRS)
+		conan_cmake_run(
+			CONANFILE conanfile.txt
+			BUILD missing
+			BASIC_SETUP
+			NO_OUTPUT_DIRS
+		)
+	else ()
+		conan_cmake_run(
+			CONANFILE conanfile.txt
+			BUILD missing
+			BASIC_SETUP
+		)
+	endif ()
 
 	if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/conanbuildinfo.cmake)
 		include(${CMAKE_CURRENT_BINARY_DIR}/conanbuildinfo.cmake)
-		conan_basic_setup(TARGETS KEEP_RPATHS)
+		if (NO_OUTPUT_DIRS)
+			conan_basic_setup(TARGETS KEEP_RPATHS)
+		else ()
+			conan_basic_setup(TARGETS KEEP_RPATHS NO_OUTPUT_DIRS)
+		endif ()
 	else ()
 		message(WARNING "The file ${CMAKE_CURRENT_BINARY_DIR}/conanbuildinfo.cmake doesn't exist, you have to run conan install first")
 	endif ()
