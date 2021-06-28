@@ -3,7 +3,7 @@ name: Build on Linux
 on:
   push:
     branches:
-      - main
+      - master
 jobs:
   build_and_package:
     runs-on: ubuntu-18.04
