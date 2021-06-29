@@ -5,3 +5,6 @@
 	path = libs/rxqt
 	url = https://github.com/tetsurom/rxqt.git
 
+[submodule "libs/material"]
+	path = libs/material
+	url = https://github.com/laserpants/qt-material-widgets.git
