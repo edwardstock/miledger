@@ -25,7 +25,12 @@ jobs:
           sudo bash cfg/setup.sh
       - name: Build & Package
         run: bash cfg/package_make.sh -t appimage
-      - name: Publish
-        uses: actions/upload-artifact@v2
+      - name: Upload release to a GitHub release
+        uses: svenstaro/upload-release-action@2.2.1
         with:
-          path: _build/*.AppImage
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: _build/*.AppImage
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true
+
