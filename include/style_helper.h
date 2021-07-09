@@ -10,6 +10,12 @@
 #ifndef MILEDGER_STYLE_HELPER_H
 #define MILEDGER_STYLE_HELPER_H
 
+#include <QGuiApplication>
+#include <QIcon>
+#include <QLabel>
+#include <QScreen>
+#include <QString>
+
 class StyleHelper {
 private:
     bool m_isDarkMode = false;
@@ -42,11 +48,24 @@ public:
     QString iconText(const QString& text, const QString& fileName, int iconSize = 32, bool iconLeft = true) {
         const QString iconPath = QString(":/icons/%1%2.png").arg(fileName, m_isDarkMode ? "_dark" : "_light");
         if (iconLeft) {
-            return QString("<html><span><img width=%1 height=%1 style='width:%1;height:%1;' src='%2'/> %3</span></html>").arg(QString::number(iconSize), iconPath, text);
+            return QString("<html><span style='display:inline-block;'><img width=%1 height=%1 style='width:%1;height:%1;' src='%2'/> %3</span></html>").arg(QString::number(pxToPt(iconSize)), iconPath, text);
         }
 
-        return QString("<html><span>%1 <img width=%2 height=%2 style='width:%2;height:%2;' src='%3'/></span></html>").arg(text, QString::number(iconSize), iconPath);
+        return QString("<html><span>%1 <img width=%2 height=%2 style='width:%2;height:%2;' src='%3'/></span></html>").arg(text, QString::number(pxToPt(iconSize)), iconPath);
     }
+
+    double ptToPx(double pt) {
+        return pt / 72 * dpi();
+    }
+
+    double pxToPt(double px) {
+        return px * 72 / dpi();
+    }
+
+    double dpi() {
+        return QGuiApplication::primaryScreen()->physicalDotsPerInch();
+    }
+
     //    static bool IS_DARK_MODE = false;
 };
 

@@ -34,6 +34,7 @@ signals:
     void openedConsole();
 
 protected:
+    void showEvent(QShowEvent* event) override;
     void hideEvent(QHideEvent* event) override;
     void closeEvent(QCloseEvent* event) override;
 
@@ -58,6 +59,7 @@ private:
 
     QMessageBox* openAppDialog = nullptr;
 
+    bool showWindow = true;
     rxcpp::composite_subscription m_subs;
 };
 #endif // MAINWINDOW_H

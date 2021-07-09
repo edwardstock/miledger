@@ -31,12 +31,22 @@
                             </widget>
                         </item>
                         <item>
-                            <widget class="QPushButton" name="pushButton">
+                            <widget class="QPushButton" name="btnServer">
                                 <property name="enabled">
                                     <bool>false</bool>
                                 </property>
                                 <property name="text">
-                                    <string>Run (unavailable yet)</string>
+                                    <string>Run</string>
+                                </property>
+                            </widget>
+                        </item>
+                        <item>
+                            <widget class="QPushButton" name="btnServerSettings">
+                                <property name="enabled">
+                                    <bool>false</bool>
+                                </property>
+                                <property name="text">
+                                    <string>Server Settings</string>
                                 </property>
                             </widget>
                         </item>

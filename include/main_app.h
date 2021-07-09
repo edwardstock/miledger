@@ -1,7 +1,7 @@
 #ifndef MILEDGERAPP_H
 #define MILEDGERAPP_H
 
-#include "device_looper.h"
+#include "device_server.h"
 
 #include <QObject>
 #include <QThread>
@@ -13,7 +13,7 @@ class MainApp : public QObject {
     Q_PROPERTY(QString progressHint READ getProgressHint WRITE setProgressHint NOTIFY progressHintChanged)
     Q_PROPERTY(bool progressVisible READ getProgressVisible WRITE setProgressVisible NOTIFY progressVisibilityChanged)
     Q_PROPERTY(bool btnInstallEnabled READ getBtnInstallEnabled WRITE setBtnInstallEnabled NOTIFY btnInstallEnabledChanged)
-    Q_PROPERTY(bool btnWalletEnabled READ getBtnWalletEnabled WRITE setBtnWalletEnabled NOTIFY btnWalletEnabledChanged)
+    Q_PROPERTY(bool btnConsoleEnabled READ getBtnConsoleEnabled WRITE setBtnConsoleEnabled NOTIFY btnConsoleEnabledChanged)
 
 public:
     explicit MainApp(QObject* parent = nullptr);
@@ -43,15 +43,15 @@ public:
         m_btn_install_enabled = enabled;
     }
 
-    bool getBtnWalletEnabled() const {
-        return m_btn_wallet_enabled;
+    bool getBtnConsoleEnabled() const {
+        return m_btn_console_enabled;
     }
 
-    void setBtnWalletEnabled(bool enabled) {
-        m_btn_wallet_enabled = enabled;
+    void setBtnConsoleEnabled(bool enabled) {
+        m_btn_console_enabled = enabled;
     }
 
-    DeviceLooper& getDeviceLooper() {
+    DeviceServer& getDeviceLooper() {
         return dev;
     }
 
@@ -62,7 +62,7 @@ signals:
     void progressHintChanged();
     void progressVisibilityChanged();
     void btnInstallEnabledChanged();
-    void btnWalletEnabledChanged();
+    void btnConsoleEnabledChanged();
     void stopHandler();
     void guiDeviceStateChanged(QString hint, bool progress, bool enableInstall, bool enableWallet);
     void appNotOpened();
@@ -71,9 +71,9 @@ private:
     QString m_progress_hint = "Searching for ledger...";
     bool m_progress_visible = true;
     bool m_btn_install_enabled = false;
-    bool m_btn_wallet_enabled = false;
+    bool m_btn_console_enabled = false;
 
-    DeviceLooper dev;
+    DeviceServer dev;
     QThread dev_thread;
 };
 

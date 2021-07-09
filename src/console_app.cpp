@@ -9,6 +9,7 @@
 
 #include "include/console_app.h"
 
+#include "include/app.h"
 #include "include/errors.h"
 #include "include/image_cache.h"
 #include "include/utils.h"
@@ -20,11 +21,11 @@
 #include <fstream>
 
 miledger::ConsoleApp::ConsoleApp(QObject* parent)
-    : QObject(parent),
-      devThread(),
-      dev(),
-      explorerRepo(),
-      gateRepo() {
+    : QObject(parent)
+    , devThread()
+    , dev(miledger::App::get().createLooper())
+    , explorerRepo()
+    , gateRepo() {
 
     dev.moveToThread(&devThread);
 

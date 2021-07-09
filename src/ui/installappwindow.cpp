@@ -1,4 +1,4 @@
-#include "include/installappwindow.h"
+#include "include/ui/installappwindow.h"
 
 #include "include/miledger-config.h"
 #include "ui_installappwindow.h"

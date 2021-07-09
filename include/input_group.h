@@ -97,6 +97,7 @@ public:
     }
     ~InputGroup() {
     }
+
     void addInput(
         BaseInputField* input,
         std::vector<miledger::BaseMinterValidator*> validators,
@@ -120,7 +121,7 @@ public:
         std::vector<miledger::BaseMinterValidator*> validators,
         bool required) {
         InputGroupData data{input, validators, errorView, required, true};
-        this->connect(input, &BaseInputField::namedTextChanged, this, &InputGroup::inputChanged);
+        connect(input, &BaseInputField::namedTextChanged, this, &InputGroup::inputChanged);
         data.errorView->setObjectName("inputFieldError");
         inputs.insert(input->getName(), std::move(data));
         inputData[input->getName()] = "";
@@ -197,6 +198,9 @@ public:
     void reset() {
         for (const auto& kv : inputs) {
             kv.errorView->clear();
+            if (kv.externalError) {
+                kv.errorView->setVisible(false);
+            }
             if (kv.required) {
                 validStates[kv.input->getName()] = false;
             }

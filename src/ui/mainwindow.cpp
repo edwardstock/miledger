@@ -1,4 +1,4 @@
-#include "include/mainwindow.h"
+#include "include/ui/mainwindow.h"
 
 #include "include/main_app.h"
 #include "include/settings.h"
@@ -21,8 +21,8 @@ MainWindow::MainWindow(QWidget* parent)
     connect(app, &MainApp::btnInstallEnabledChanged, [=]() {
         ui->btnInstall->setEnabled(app->getBtnInstallEnabled());
     });
-    connect(app, &MainApp::btnWalletEnabledChanged, [=]() {
-        ui->btnWallet->setEnabled(app->getBtnWalletEnabled());
+    connect(app, &MainApp::btnConsoleEnabledChanged, [=]() {
+        ui->btnWallet->setEnabled(app->getBtnConsoleEnabled());
     });
     connect(app, &MainApp::progressVisibilityChanged, [=]() {
         ui->progressConnecting->setVisible(app->getProgressVisible());
@@ -32,6 +32,25 @@ MainWindow::MainWindow(QWidget* parent)
     connect(ui->btnWallet, SIGNAL(clicked()), this, SLOT(onClickedConsole()));
 
     connect(app, &MainApp::appNotOpened, this, &MainWindow::onAppNotOpened);
+}
+
+MainWindow::~MainWindow() {
+    delete ui;
+    delete app;
+    //    delete menu;
+    //    delete quitAction;
+    //    delete viewWindow;
+
+    if (installWindow) {
+        installWindow->hide();
+        delete installWindow;
+    }
+
+    delete openAppDialog;
+
+    if (m_subs.is_subscribed()) {
+        m_subs.unsubscribe();
+    }
 }
 
 void MainWindow::onAppNotOpened() {
@@ -108,6 +127,15 @@ void MainWindow::onClickedConsole() {
     //    this->close();
 }
 
+void MainWindow::showEvent(QShowEvent* event) {
+    if (!showWindow) {
+        event->ignore();
+        emit openedConsole();
+        return;
+    }
+    QWidget::showEvent(event);
+}
+
 void MainWindow::hideEvent(QHideEvent* event) {
     QMainWindow::hideEvent(event);
     delete app;
@@ -135,24 +163,5 @@ void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason) {
         break;
     default:
         break;
-    }
-}
-
-MainWindow::~MainWindow() {
-    delete ui;
-    delete app;
-    //    delete menu;
-    //    delete quitAction;
-    //    delete viewWindow;
-
-    if (installWindow) {
-        installWindow->hide();
-        delete installWindow;
-    }
-
-    delete openAppDialog;
-
-    if (m_subs.is_subscribed()) {
-        m_subs.unsubscribe();
     }
 }

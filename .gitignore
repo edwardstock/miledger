@@ -9,3 +9,4 @@ include/miledger-config.h
 _build
 qt_conan.py
 install/ledger/__pycache__
+.kdev*

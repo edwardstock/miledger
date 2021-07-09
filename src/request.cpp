@@ -232,7 +232,7 @@ bool miledger::net::base_request::has_query() const {
 
 bool miledger::net::base_request::has_query(const QString& key, bool icase) const {
     const auto& cmp = [icase](const QString& lhs, const QString& rhs) {
-        return QString::compare(lhs, rhs, icase ? Qt::CaseInsensitive : Qt::CaseSensitive);
+        return QString::compare(lhs, rhs, icase ? Qt::CaseInsensitive : Qt::CaseSensitive) == 0;
     };
 
     for (const auto& param : m_params) {
@@ -246,7 +246,7 @@ bool miledger::net::base_request::has_query(const QString& key, bool icase) cons
 
 QString miledger::net::base_request::get_query_value(const QString& key, bool icase) const {
     const auto& cmp = [icase](const QString& lhs, const QString& rhs) {
-        return QString::compare(lhs, rhs, icase ? Qt::CaseInsensitive : Qt::CaseSensitive);
+        return QString::compare(lhs, rhs, icase ? Qt::CaseInsensitive : Qt::CaseSensitive) == 0;
     };
     for (const auto& param : m_params) {
         if (cmp(param.first, key)) {
@@ -260,7 +260,7 @@ QString miledger::net::base_request::get_query_value(const QString& key, bool ic
 optns::optional<miledger::net::kv> miledger::net::base_request::find_query(const QString& key, bool icase) const {
     optns::optional<miledger::net::kv> out;
     const auto& cmp = [icase](const QString& lhs, const QString& rhs) {
-        return QString::compare(lhs, rhs, icase ? Qt::CaseInsensitive : Qt::CaseSensitive);
+        return QString::compare(lhs, rhs, icase ? Qt::CaseInsensitive : Qt::CaseSensitive) == 0;
     };
     for (const auto& param : m_params) {
         if (cmp(param.first, key)) {
@@ -274,7 +274,7 @@ optns::optional<miledger::net::kv> miledger::net::base_request::find_query(const
 
 void miledger::net::base_request::set_query(const QString& key, const QString& value, bool icase) {
     const auto& cmp = [icase](const QString& lhs, const QString& rhs) {
-        return QString::compare(lhs, rhs, icase ? Qt::CaseInsensitive : Qt::CaseSensitive);
+        return QString::compare(lhs, rhs, icase ? Qt::CaseInsensitive : Qt::CaseSensitive) == 0;
     };
     for (auto& param : m_params) {
         if (cmp(param.first, key)) {
@@ -289,7 +289,7 @@ void miledger::net::base_request::set_query(const miledger::net::kv& kv, bool ic
 
 bool miledger::net::base_request::remove_query_array(const QString& key, size_t index, bool icase) {
     const auto& cmp = [icase](const QString& lhs, const QString& rhs) {
-        return QString::compare(lhs, rhs, icase ? Qt::CaseInsensitive : Qt::CaseSensitive);
+        return QString::compare(lhs, rhs, icase ? Qt::CaseInsensitive : Qt::CaseSensitive) == 0;
     };
 
     size_t foundCount = 0;
@@ -315,7 +315,7 @@ bool miledger::net::base_request::remove_query_array(const QString& key, size_t 
 
 bool miledger::net::base_request::remove_query(const QString& key, bool icase) {
     const auto& cmp = [icase](const QString& lhs, const QString& rhs) {
-        return QString::compare(lhs, rhs, icase ? Qt::CaseInsensitive : Qt::CaseSensitive);
+        return QString::compare(lhs, rhs, icase ? Qt::CaseInsensitive : Qt::CaseSensitive) == 0;
     };
 
     int foundCount = 0;
@@ -345,7 +345,7 @@ std::vector<QString> miledger::net::base_request::get_query_array(const QString&
     std::vector<QString> out;
 
     const auto& cmp = [icase](const QString& lhs, const QString& rhs) {
-        return QString::compare(lhs, rhs, icase ? Qt::CaseInsensitive : Qt::CaseSensitive);
+        return QString::compare(lhs, rhs, icase ? Qt::CaseInsensitive : Qt::CaseSensitive) == 0;
     };
 
     for (const auto& param : m_params) {
@@ -456,35 +456,6 @@ void miledger::net::base_request::add_path(const QString& path) {
         }
     }
 }
-
-// void miledger::net::base_request::add_path(const std::string& path) {
-//     add_path(QString::fromStdString(path));
-// }
-//
-// void miledger::net::base_request::add_path(std::string&& p) {
-//     QString path = QString::fromStdString(std::move(p));
-//     if (path.length() == 0 || (path.length() == 1 && path[0] == '/')) {
-//         return;
-//     }
-//
-//     if (m_path.length() == 0) {
-//         m_path = "/";
-//     }
-//
-//     if (path[0] == '/') {
-//         if (m_path[m_path.length() - 1] == '/') {
-//             m_path += path.chopped(1);
-//         } else {
-//             m_path += path;
-//         }
-//     } else {
-//         if (m_path[m_path.length() - 1] != '/') {
-//             m_path += '/' + path;
-//         } else {
-//             m_path += path;
-//         }
-//     }
-// }
 
 bool miledger::net::base_request::is_ssl() const {
     return m_ssl;

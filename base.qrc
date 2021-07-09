@@ -2,6 +2,7 @@
     <qresource prefix="/stylesheet">
         <file>style_win.qss</file>
         <file>style_osx.qss</file>
+        <file>style_linux.qss</file>
     </qresource>
     <qresource prefix="/icons">
         <file alias="ic_launcher_32.png">resources/icon-32.png</file>
@@ -22,6 +23,8 @@
         <file alias="ic_tx_exchange_light.png">resources/icons/ic_tx_exchange_light.png</file>
         <file alias="ic_tx_send_light.png">resources/icons/ic_tx_send_light.png</file>
         <file alias="ic_tx_send_dark.png">resources/icons/ic_tx_send_dark.png</file>
+        <file alias="ic_warning_dark.png">resources/icons/ic_warning_dark.png</file>
+        <file alias="ic_warning_light.png">resources/icons/ic_warning_light.png</file>
 
         <file alias="ic_refresh.svg">resources/icons/ic_refresh_24px.svg</file>
         <file alias="ic_tx_send.svg">resources/icons/ic_tx_send.svg</file>

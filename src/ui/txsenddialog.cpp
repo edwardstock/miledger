@@ -1,4 +1,4 @@
-#include "include/txsenddialog.h"
+#include "include/ui/txsenddialog.h"
 
 #include "include/input_fields.hpp"
 #include "include/utils.h"

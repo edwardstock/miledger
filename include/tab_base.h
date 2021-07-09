@@ -11,7 +11,7 @@
 #define MILEDGER_TAB_BASE_H
 
 #include "console_app.h"
-#include "txsenddialog.h"
+#include "include/ui/txsenddialog.h"
 
 #include <QGridLayout>
 #include <QMessageBox>

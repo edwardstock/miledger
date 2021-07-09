@@ -1,29 +1,34 @@
-#include "include/consolewindow.h"
+#include "include/ui/consolewindow.h"
 
+#include "include/app.h"
 #include "include/miledger-config.h"
 #include "include/net/explorer_repo.h"
+#include "include/settings.h"
 #include "include/style_helper.h"
 #include "include/tab_base.h"
 #include "include/tab_exchange.h"
 #include "include/tab_send.h"
+#include "include/ui/serversettingsdialog.h"
 #include "include/utils.h"
 #include "ui_consolewindow.h"
 
 #include <QAction>
 #include <QClipboard>
 #include <QGuiApplication>
+#include <QSystemTrayIcon>
 #include <toolbox/strings.hpp>
 
 using namespace minter;
 
 ConsoleWindow::ConsoleWindow(QWidget* parent)
-    : QMainWindow(parent),
-      ui(new Ui::ConsoleWindow),
-      app(new miledger::ConsoleApp(this)),
-      tabs(),
-      statusIcon(new QLabel(this)),
-      statusLabel(new QLabel(this)),
-      statusProgress(new QProgressBar(this)) {
+    : QMainWindow(parent)
+    , ui(new Ui::ConsoleWindow)
+    , app(new miledger::ConsoleApp(this))
+    , tabs()
+    , statusIcon(new QLabel(this))
+    , statusLabel(new QLabel(this))
+    , statusProgress(new QProgressBar(this))
+    , serverThread(nullptr) {
 
     mpd_setminalloc(4);
 
@@ -62,12 +67,31 @@ ConsoleWindow::ConsoleWindow(QWidget* parent)
         ui->layoutBalance->addWidget(addressLabel, 1, 0, 1, 1);
         ui->layoutBalance->addWidget(addressCopy, 1, 1, 1, 1);
 
+        if (miledger::App::get().useMnemonic()) {
+            auto f = addressLabel->font();
+            QFontMetrics m(f);
+
+            QLabel* useMnemonicLabel = new QLabel(
+                StyleHelper::get().iconText("<b>Mnemonic phrase is used instead real Ledger device</b>", "ic_warning", m.height()),
+                this);
+
+            ui->layoutBalance->addWidget(useMnemonicLabel, 2, 0, 1, 2);
+        }
+
         connect(addressCopy, &QPushButton::clicked, [this](bool) {
             QClipboard* cp = QGuiApplication::clipboard();
             if (cp != nullptr) {
                 cp->setText(QString::fromStdString(app->address.to_string()));
             }
         });
+
+        ui->btnServer->setEnabled(true);
+        connect(ui->btnServer, &QPushButton::clicked, this, &ConsoleWindow::onServerClicked);
+
+        ui->btnServerSettings->setEnabled(true);
+        connect(ui->btnServerSettings, &QPushButton::clicked, this, &ConsoleWindow::onServerSettingsClicked);
+
+        createTray();
     }
 
     connect(balanceRefresh, SIGNAL(clicked()), this, SLOT(updateBalance()));
@@ -82,21 +106,141 @@ ConsoleWindow::~ConsoleWindow() {
 
     delete ui;
     delete app;
+
+    delete server;
+    if (serverThread && serverThread->isRunning()) {
+        serverThread->quit();
+        serverThread->wait();
+        delete serverThread;
+    }
+}
+
+void ConsoleWindow::createTray() {
+    trayRestoreAction = new QAction(tr("Open Console"), this);
+    connect(trayRestoreAction, &QAction::triggered, this, &QWidget::showNormal);
+
+    trayMinimizeAction = new QAction(tr("Minimize"), this);
+    connect(trayMinimizeAction, &QAction::triggered, this, &QWidget::hide);
+
+    trayStopServerAndClose = new QAction(tr("Stop server and close"), this);
+    trayStopServerAndClose->setEnabled(false);
+    connect(trayStopServerAndClose, &QAction::triggered, this, [this](bool) {
+        onServerClicked(false);
+        close();
+    });
+
+    trayMenu = new QMenu(this);
+    trayMenu->addAction(trayMinimizeAction);
+    trayMenu->addAction(trayRestoreAction);
+    trayMenu->addSeparator();
+    trayMenu->addAction(trayStopServerAndClose);
+
+    trayIcon = new QSystemTrayIcon(this);
+    trayIcon->setContextMenu(trayMenu);
+    trayIcon->setIcon(QIcon(":/icons/ic_launcher_32.png"));
+
+    connect(trayIcon, &QSystemTrayIcon::activated, this, &ConsoleWindow::iconActivated);
 }
 
 void ConsoleWindow::showEvent(QShowEvent* event) {
     QWidget::showEvent(event);
-    app->dev.setInfiniteEmitting(true);
-    app->start();
+    if (!showedFirstTime) {
+        app->dev.setInfiniteEmitting(true);
+        app->start();
+        showedFirstTime = true;
+    }
+}
+
+void ConsoleWindow::iconActivated(QSystemTrayIcon::ActivationReason reason) {
+    switch (reason) {
+    case QSystemTrayIcon::Trigger:
+    case QSystemTrayIcon::DoubleClick:
+        show();
+        break;
+    case QSystemTrayIcon::MiddleClick:
+        showMessage();
+        break;
+    case QSystemTrayIcon::Context:
+        break;
+    default:
+        break;
+    }
+}
+void ConsoleWindow::showMessage() {
+}
+void ConsoleWindow::messageClicked() {
 }
 
 void ConsoleWindow::closeEvent(QCloseEvent* event) {
+    if (Settings::get().getValue<bool>(Settings::KEY_SERVER_CLOSE_TRAY, true)) {
+#ifdef Q_OS_MACOS
+        if (!event->spontaneous() || !isVisible()) {
+            return;
+        }
+#endif
+
+        if (trayIcon->isVisible()) {
+            QMessageBox::information(this, tr("Closing window"),
+                                     tr("The program will keep running in the "
+                                        "system tray. To terminate the program, "
+                                        "choose <b>Stop server and close</b> in the context menu "
+                                        "of the system tray entry."));
+            hide();
+            event->ignore();
+            return;
+        }
+    }
+
     QMainWindow::closeEvent(event);
     if (event->isAccepted()) {
         emit closed();
     } else {
         event->accept();
     }
+}
+
+void ConsoleWindow::onServerClicked(bool) {
+    if (server && server->isRunning()) {
+        server->stop();
+        onServerStopped();
+        serverThread->quit();
+        serverThread->wait();
+        delete server;
+        server = nullptr;
+        delete serverThread;
+        serverThread = nullptr;
+
+        if (Settings::get().getValue<bool>(Settings::KEY_SERVER_CLOSE_TRAY, true)) {
+            trayIcon->hide();
+        }
+    } else {
+        if (Settings::get().getValue<bool>(Settings::KEY_SERVER_CLOSE_TRAY, true)) {
+            trayStopServerAndClose->setEnabled(true);
+            trayIcon->show();
+        }
+
+        serverThread = new QThread();
+        server = new miledger::WsServer(app);
+        server->moveToThread(serverThread);
+
+        connect(serverThread, &QThread::started, server, &miledger::WsServer::run);
+        serverThread->start();
+
+        ui->btnServer->setText(tr("Stop server"));
+        ui->btnServerSettings->setEnabled(false);
+        ui->tabWidget->setEnabled(false);
+    }
+}
+
+void ConsoleWindow::onServerStopped() {
+    ui->btnServer->setText(tr("Run"));
+    ui->tabWidget->setEnabled(true);
+    ui->btnServerSettings->setEnabled(true);
+}
+
+void ConsoleWindow::onServerSettingsClicked(bool) {
+    ServerSettingsDialog dialog(this);
+    dialog.exec();
 }
 
 void ConsoleWindow::updateBalance() {

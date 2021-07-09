@@ -1,5 +1,12 @@
 # Release notes
 
+## 0.2.0
+
+- Source files refactoring
+- Reverted to qt6 as it supports LTS ubuntu 18.04
+- Added websocket and http server for external clients
+- Added ability to use mnemonic instead ledger by passing command line argument: `--mnemonic "aaa bbb ccc ..."`
+
 ## 0.1.1
 
 - Migrated from standalone Qt 6 to conan Qt 5.15.2 for compatibility with old libc

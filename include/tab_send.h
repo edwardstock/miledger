@@ -10,10 +10,10 @@
 #ifndef MILEDGER_TAB_SEND_H
 #define MILEDGER_TAB_SEND_H
 
-#include "device_looper.h"
+#include "device_server.h"
 #include "include/input_group.h"
+#include "include/ui/txsenddialog.h"
 #include "tab_base.h"
-#include "txsenddialog.h"
 
 #include <QButtonGroup>
 #include <QComboBox>

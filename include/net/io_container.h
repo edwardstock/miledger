@@ -53,7 +53,7 @@ public:
             QCryptographicHash::Md5);
         Q_ASSERT(hash.size() == 16);
 
-        QDataStream stream(&hash, QIODevice::OpenModeFlag::ReadOnly);
+        QDataStream stream(&hash, QIODeviceBase::OpenModeFlag::ReadOnly);
         qint64 a, b;
         stream >> a >> b;
         return a ^ b;

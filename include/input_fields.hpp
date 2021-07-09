@@ -16,6 +16,7 @@
 
 #include <QAbstractItemModel>
 #include <QAbstractItemView>
+#include <QCheckBox>
 #include <QComboBox>
 #include <QCompleter>
 #include <QFont>
@@ -29,6 +30,7 @@
 #include <QPlainTextEdit>
 #include <QString>
 #include <QStyledItemDelegate>
+#include <QSysInfo>
 #include <functional>
 #include <memory>
 
@@ -50,18 +52,22 @@ private:
 
 public:
     CoinItemViewDelegate(miledger::ConsoleApp* app)
-        : app(app),
+        : app(app)
+        ,
 #ifndef MILEDGER_LINUX
-          m_font("Inter", 14, 600),
-          m_fontSub("Inter", 12, 400),
+        m_font("Inter", 12, 600)
+        , m_fontSub("Inter", 10, 400)
+        ,
 #else
-          m_font("Inter", 10, 600),
-          m_fontSub("Inter", 8, 400),
+        m_font("Inter", 10, 600)
+        , m_fontSub("Inter", 8, 400)
+        ,
 #endif
-          m_fm(m_font),
-          m_fmSub(m_fontSub),
-          m_iconSize(26, 26),
-          m_defIcon(":/icons/ic_launcher_64.png") {
+        m_fm(m_font)
+        , m_fmSub(m_fontSub)
+        , m_iconSize(26, 26)
+        , m_defIcon(":/icons/ic_launcher_64.png") {
+
         // todo: check this does not lead to change font metrics
         m_font.setBold(true);
     }
@@ -156,39 +162,39 @@ signals:
 
 public:
     BaseInputField(QString name, QWidget* parent = nullptr)
-        : QWidget(parent),
-          m_layout(new QGridLayout()),
-          m_name(std::move(name)),
-          label(new QLabel(this)),
-          errorView(new QLabel(this)) {
+        : QWidget(parent)
+        , m_layout(new QGridLayout(this))
+        , m_name(std::move(name))
+        , label(new QLabel(this))
+        , errorView(new QLabel(this)) {
     }
 
     BaseInputField(QString name, QString placeholder, QWidget* parent = nullptr)
-        : QWidget(parent),
-          m_layout(new QGridLayout()),
-          m_name(std::move(name)),
-          m_placeholder(std::move(placeholder)),
-          label(new QLabel(m_placeholder, this)),
-          errorView(new QLabel(this)) {
+        : QWidget(parent)
+        , m_layout(new QGridLayout(this))
+        , m_name(std::move(name))
+        , m_placeholder(std::move(placeholder))
+        , label(new QLabel(m_placeholder, this))
+        , errorView(new QLabel(this)) {
     }
 
     BaseInputField(QString name, QLabel* label, QLabel* errorView, QWidget* parent = nullptr)
-        : QWidget(parent),
-          m_layout(new QGridLayout()),
-          m_name(std::move(name)),
-          label(label),
-          errorView(errorView),
-          externalLabels(true) {
+        : QWidget(parent)
+        , m_layout(new QGridLayout(this))
+        , m_name(std::move(name))
+        , label(label)
+        , errorView(errorView)
+        , externalLabels(true) {
     }
 
     BaseInputField(QString name, QString placeholder, QLabel* label, QLabel* errorView, QWidget* parent = nullptr)
-        : QWidget(parent),
-          m_layout(new QGridLayout()),
-          m_name(std::move(name)),
-          m_placeholder(std::move(placeholder)),
-          label(label),
-          errorView(errorView),
-          externalLabels(true) {
+        : QWidget(parent)
+        , m_layout(new QGridLayout(this))
+        , m_name(std::move(name))
+        , m_placeholder(std::move(placeholder))
+        , label(label)
+        , errorView(errorView)
+        , externalLabels(true) {
     }
 
     ~BaseInputField() {
@@ -215,7 +221,10 @@ private:
 
 protected:
     void internalSetup(QWidget* input) {
-        input->setFont(QFont("Inter"));
+        //        if(QSysInfo::productType() != "windows") {
+        //
+        //        }
+        //        input->setFont(QFont("Inter"));
         m_layout->setContentsMargins(0, 0, 0, 0);
         setLayout(m_layout);
 
@@ -261,6 +270,7 @@ private slots:
     };
 
 public:
+    const QString INPUT_MASK_IP_ADDRESS = "000.000.000.000;_";
     QLineEdit* input;
     QCompleter* completer = nullptr;
 
@@ -269,7 +279,7 @@ public:
           input(new QLineEdit(this)) {
 
         setupViews();
-        connect(input, &QLineEdit::textChanged, [this](const QString& val) {
+        connect(input, &QLineEdit::textChanged, [this](QString val) {
             m_value = val;
             emit namedTextChanged(getName(), val);
         });
@@ -279,7 +289,7 @@ public:
           input(new QLineEdit(this)) {
 
         setupViews();
-        connect(input, &QLineEdit::textChanged, [this](const QString& val) {
+        connect(input, &QLineEdit::textChanged, [this](QString val) {
             m_value = val;
             emit namedTextChanged(getName(), val);
         });
@@ -289,7 +299,7 @@ public:
         : BaseInputField(name, label, errorView, parent),
           input(new QLineEdit(this)) {
         setupViews();
-        connect(input, &QLineEdit::textChanged, [this](const QString& val) {
+        connect(input, &QLineEdit::textChanged, [this](QString val) {
             m_value = val;
             emit namedTextChanged(getName(), val);
         });
@@ -299,7 +309,7 @@ public:
         : BaseInputField(name, placeholder, label, errorView, parent),
           input(new QLineEdit(this)) {
         setupViews();
-        connect(input, &QLineEdit::textChanged, [this](const QString& val) {
+        connect(input, &QLineEdit::textChanged, [this](QString val) {
             m_value = val;
             emit namedTextChanged(getName(), val);
         });
@@ -328,13 +338,17 @@ public:
         }
     }
 
+    void setInputMask(const QString& inputMask) {
+        input->setInputMask(inputMask);
+    }
+
     void setText(const QString& text) {
         input->setText(text);
     }
 
 protected:
     void setupViews() {
-        input->setFont(QFont("Inter", 10));
+        //        input->setFont(QFont("Inter", 10));
         //        input->setSizePolicy(
         //            QSizePolicy::Expanding,
         //            QSizePolicy::Expanding
@@ -419,7 +433,7 @@ public:
 
 protected:
     void setupViews() {
-        input->setFont(QFont("Inter", 10));
+        //        input->setFont(QFont("Inter", 10));
         internalSetup((QWidget*) input);
     }
 };
@@ -497,6 +511,70 @@ private:
             emit itemSelected(index, m_data[index].second);
         }
     }
+};
+
+class InputFieldCheckbox : public BaseInputField {
+    Q_OBJECT
+signals:
+    void toggled(bool);
+
+public:
+    InputFieldCheckbox(QString name, QWidget* parent = nullptr)
+        : BaseInputField(std::move(name), "", parent)
+        , input(new QCheckBox(this)) {
+        setupViews();
+        connect(input, &QCheckBox::toggled, [this](bool c) {
+            emit toggled(c);
+            emit namedTextChanged(getName(), c ? "1" : "0");
+        });
+    }
+    InputFieldCheckbox(QString name, QString placeholder, QWidget* parent = nullptr)
+        : BaseInputField(std::move(name), std::move(placeholder), parent)
+        , input(new QCheckBox(this)) {
+        setupViews();
+        connect(input, &QCheckBox::toggled, [this](bool c) {
+            emit toggled(c);
+            emit namedTextChanged(getName(), c ? "1" : "0");
+        });
+    }
+    InputFieldCheckbox(QString name, QLabel* label, QLabel* errorView, QWidget* parent = nullptr)
+        : BaseInputField(std::move(name), label, errorView, parent)
+        , input(new QCheckBox(this)) {
+        setupViews();
+        connect(input, &QCheckBox::toggled, [this](bool c) {
+            emit toggled(c);
+            emit namedTextChanged(getName(), c ? "1" : "0");
+        });
+    }
+    InputFieldCheckbox(QString name, QString placeholder, QLabel* label, QLabel* errorView, QWidget* parent = nullptr)
+        : BaseInputField(std::move(name), placeholder, label, errorView, parent)
+        , input(new QCheckBox(this)) {
+        setupViews();
+        connect(input, &QCheckBox::toggled, [this](bool c) {
+            emit toggled(c);
+            emit namedTextChanged(getName(), c ? "1" : "0");
+        });
+    }
+    ~InputFieldCheckbox() {
+    }
+
+    void setChecked(bool checked) {
+        input->setCheckState(checked ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
+    }
+
+    void setChecked(Qt::CheckState state) {
+        input->setCheckState(state);
+    }
+
+    QCheckBox* input;
+
+protected:
+    void setupViews() {
+        BaseInputField::setupViews();
+        internalSetup(input);
+    }
+
+private:
 };
 
 #endif // MILEDGER_INPUT_FIELDS_HPP

@@ -30,16 +30,18 @@ macro (conan_init)
 	include(ConanBuild)
 	if (NO_OUTPUT_DIRS)
 		conan_cmake_run(
-			CONANFILE conanfile.txt
+			CONANFILE conanfile.py
 			BUILD missing
 			BASIC_SETUP
 			NO_OUTPUT_DIRS
+			OPTIONS "${CONAN_OPTS}"
 		)
 	else ()
 		conan_cmake_run(
-			CONANFILE conanfile.txt
+			CONANFILE conanfile.py
 			BUILD missing
 			BASIC_SETUP
+			OPTIONS "${CONAN_OPTS}"
 		)
 	endif ()
 

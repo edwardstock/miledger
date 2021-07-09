@@ -16,6 +16,7 @@
 #include <QRegularExpressionValidator>
 #include <QString>
 #include <QValidator>
+#include <cstdint>
 #include <minter/minter_tx_config.h>
 #include <minter/tx/utils.h>
 #include <vector>
@@ -104,6 +105,57 @@ protected:
 
 private:
     QDoubleValidator m_validator;
+};
+
+class PortValidator : public BaseMinterValidator {
+    Q_OBJECT
+public:
+    PortValidator(QObject* parent = nullptr)
+        : BaseMinterValidator(tr("Invalid port number: range is 81-65535"), parent)
+        , m_validator(81, UINT16_MAX, this) {
+    }
+    PortValidator(QString errorMessage, QObject* parent = nullptr)
+        : BaseMinterValidator(errorMessage, parent)
+        , m_validator(81, UINT16_MAX, this) {
+    }
+
+    ~PortValidator() = default;
+
+    State validate(QString& string, int& i) const override {
+        return m_validator.validate(string, i);
+    }
+
+    void fixup(QString& string) const override {
+        m_validator.fixup(string);
+    }
+
+private:
+    QIntValidator m_validator;
+};
+
+class IpAddressValidator : public MinterRegexpValidator {
+    Q_OBJECT
+private:
+    const static QString m_ipRangeRegex;
+    const static QRegularExpression m_regexp;
+
+public:
+    IpAddressValidator(QObject* parent = nullptr)
+        : MinterRegexpValidator(m_regexp, parent) {
+        setErrorMessage(tr("Invalid IP Address format"));
+    }
+    IpAddressValidator(QString errorMessage, QObject* parent = nullptr)
+        : MinterRegexpValidator(m_regexp, parent) {
+        setErrorMessage(errorMessage);
+    }
+
+    State validate(QString& string, int& i) const override {
+        return MinterRegexpValidator::validate(string, i);
+    }
+
+    void fixup(QString& string) const override {
+        MinterRegexpValidator::fixup(string);
+    }
 };
 
 class MinterAddressValidator : public virtual MinterRegexpValidator {

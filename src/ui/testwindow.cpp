@@ -1,4 +1,4 @@
-#include "include/testwindow.h"
+#include "include/ui/testwindow.h"
 
 #include "include/errors.h"
 #include "include/image_cache.h"

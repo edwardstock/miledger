@@ -9,7 +9,7 @@
 #include "include/tab_send.h"
 
 #include "include/input_group.h"
-#include "include/txsenddialog.h"
+#include "include/ui/txsenddialog.h"
 #include "include/utils.h"
 #include "include/validators.hpp"
 
@@ -78,7 +78,7 @@ Ui::TabSend::TabSend(miledger::ConsoleApp* app, QWidget* parent)
     labelPayload->setBuddy(inputPayload->input);
 
     getLayout()->addWidget(labelCoin, 0, 0, 1, 1);
-    getLayout()->addWidget(inputCoin, 0, 1, 1, 3);
+    getLayout()->addWidget(inputCoin, 0, 1, 1, 4);
 
     getLayout()->addWidget(labelRecipient, 1, 0, 1, 1);
     getLayout()->addWidget(inputRecipient->input, 1, 1, 1, 4);
@@ -131,6 +131,9 @@ Ui::TabSend::TabSend(miledger::ConsoleApp* app, QWidget* parent)
 }
 
 Ui::TabSend::~TabSend() {
+    delete inputRecipient;
+    delete inputAmount;
+    delete inputPayload;
 }
 
 void Ui::TabSend::onUsePercentClicked(Ui::TabSend::UsePercentAction action) {
@@ -139,19 +142,19 @@ void Ui::TabSend::onUsePercentClicked(Ui::TabSend::UsePercentAction action) {
     }
     switch (action) {
     case Quarter:
-        inputAmount->input->setText(QString::fromStdString(
+        inputAmount->setText(QString::fromStdString(
             (currentAccount.amount * dev::bigdec18("0.25")).format(".18f")));
         break;
     case Half:
-        inputAmount->input->setText(QString::fromStdString(
+        inputAmount->setText(QString::fromStdString(
             (currentAccount.amount * dev::bigdec18("0.5")).format(".18f")));
         break;
     case HalfAndQuarter:
-        inputAmount->input->setText(QString::fromStdString(
+        inputAmount->setText(QString::fromStdString(
             (currentAccount.amount * dev::bigdec18("0.75")).format(".18f")));
         break;
     case Full:
-        inputAmount->input->setText(QString::fromStdString(
+        inputAmount->setText(QString::fromStdString(
             (currentAccount.amount).format(".18f")));
         useMax = true;
         break;
@@ -273,7 +276,7 @@ void Ui::TabSend::onPayloadChanged(const QString&, QString value) {
     calculateFee(value.toLocal8Bit().size());
 }
 
-void Ui::TabSend::onAmountChanged(const QString& fieldName, QString value) {
+void Ui::TabSend::onAmountChanged(const QString&, QString) {
     useMax = false;
 }
 

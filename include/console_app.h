@@ -10,7 +10,7 @@
 #ifndef MILEDGER_CONSOLE_APP_H
 #define MILEDGER_CONSOLE_APP_H
 
-#include "device_looper.h"
+#include "device_server.h"
 #include "net/explorer_repo.h"
 #include "net/gate_repo.h"
 #include "optional.hpp"
@@ -68,7 +68,7 @@ public:
     QIcon getCoinIcon(const dev::bigint& id);
 
     QThread devThread;
-    DeviceLooper dev;
+    DeviceServer dev;
 
     minter::explorer::balance_items balances;
     miledger::repo::tx_init_data initData;

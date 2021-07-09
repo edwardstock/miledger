@@ -40,6 +40,8 @@
 
 #cmakedefine HAVE_CXX_OPTIONAL
 
+#cmakedefine ENABLE_SERVER
+
 // clang-format on
 
 #include <QHash>

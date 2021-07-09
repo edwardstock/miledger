@@ -1,6 +1,6 @@
 QWidget
 {
-/*	font-family: 'Inter';*/
+	font-family: 'Inter';
 	font-weight: 400;
 /*	font-feature-settings: "zero";*/
 }

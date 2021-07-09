@@ -82,11 +82,16 @@ public:
     miledger::EstimateResult estimateResult;
 
     ExchangeForm(miledger::ConsoleApp* app, CoinModel& coinModel, QObject* parent = nullptr)
-        : QObject(parent), app(app), coinModel(coinModel), gasCoin(minter::def_coin_id) {
+        : QObject(parent)
+        , app(app)
+        , coinModel(coinModel)
+        , gasCoin(minter::def_coin_id)
+        , m_coinDelegate(nullptr) {
     }
 
     ~ExchangeForm() {
         delete groupBox;
+        delete m_coinDelegate;
     }
 
     optns::optional<minter::explorer::balance_item> findBalanceByCoin(const dev::bigint& coinId) const {
@@ -147,19 +152,15 @@ public:
         inputCoinToBuy = new InputField("coin_to_buy", tr("Buy coin"));
         inputCoinToSell = new InputField("coin_to_sell", tr("Sell coin"));
 
-        CoinItemViewDelegate* d1 = new CoinItemViewDelegate(app);
-        d1->setIconUpdatedCallback([this](const QModelIndex& index) {
+        m_coinDelegate = new CoinItemViewDelegate(app);
+        m_coinDelegate->setIconUpdatedCallback([this](const QModelIndex& index) {
             emit coinModel.dataChanged(index, index);
         });
-        //        CoinItemViewDelegate* d2 = new CoinItemViewDelegate(app);
-        //        d2->setIconUpdatedCallback([this](const QModelIndex& index) {
-        //            emit coinModel.dataChanged(index, index);
-        //        });
 
-        inputCoinToBuy->setCompleterModel(coinModel, 1, Qt::CaseInsensitive, d1);
+        inputCoinToBuy->setCompleterModel(coinModel, 1, Qt::CaseInsensitive, m_coinDelegate);
         inputCoinToBuy->completer->setMaxVisibleItems(10);
 
-        inputCoinToSell->setCompleterModel(coinModel, 1, Qt::CaseInsensitive, d1);
+        inputCoinToSell->setCompleterModel(coinModel, 1, Qt::CaseInsensitive, m_coinDelegate);
         inputCoinToSell->completer->setMaxVisibleItems(10);
 
         inputGroup.addInput(
@@ -191,6 +192,9 @@ protected:
         }
         return *searchCoin.value();
     }
+
+private:
+    CoinItemViewDelegate* m_coinDelegate;
 };
 
 class ExchangeBuyForm : public ExchangeForm {
