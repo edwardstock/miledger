@@ -54,7 +54,7 @@ class MiLedgerConan(ConanFile):
         "README.md",
         "RELEASE_NOTES.md",
     )
-    generators = "cmake"
+    generators = "cmake_find_package"
     default_user = "minter"
     default_channel = "latest"
 
