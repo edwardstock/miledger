@@ -2,8 +2,8 @@ name: Build on Linux
 
 on:
   push:
-    branches:
-      - master
+    tags:
+      - '*'
 jobs:
   build_and_package:
     runs-on: ubuntu-18.04
@@ -15,12 +15,13 @@ jobs:
       - name: Setup system
         run: |
           sudo apt -y update
-          sudo apt -y install gcc-8 g++ python3 python3-pip curl git
+          sudo apt -y install gcc-8 g++-8 python3 python3-pip curl git
           sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8
           pip3 install --upgrade pip
           pip3 install --upgrade setuptools
           pip3 install --upgrade requests
           pip3 install conan
+          CC=/usr/bin/gcc CXX=/usr/bin/g++ conan profile new default --force --detect
           sudo apt -y install libusb-1.0 libudev-dev
           sudo apt -y install --no-install-recommends  libgl1-mesa-dev libxcb-icccm4-dev libxcb-image0-dev libxcb-keysyms1-dev libxcb-render-util0-dev libxcb-util-dev libxcb-xinerama0-dev libxcb-xkb-dev xkb-data xorg-dev
           sudo bash cfg/setup.sh
