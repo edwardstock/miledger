@@ -102,4 +102,5 @@ cmake .. -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DENABLE_CONAN=${ENABLE_CONAN} ${INTER
 
 if [ "${DRY_RUN}" != "1" ]; then
   make -j ${threadCount}
+  cd ${BUILD_ROOT} && ./linux_deploy_qt.sh
 fi

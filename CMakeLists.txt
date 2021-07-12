@@ -36,11 +36,6 @@ include(CheckIncludeFileCXX)
 
 check_include_file_cxx("optional" HAVE_CXX_OPTIONAL)
 
-#include(${CONAN_QT_ROOT}/lib/cmake/Qt5Core/conan_qt_executables_variables.cmake)
-
-#set(QT_CONF_PREFIX "${CONAN_QT_ROOT}")
-#configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cfg/qt.in.conf ${CMAKE_BINARY_DIR}/bin/qt.conf)
-
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_AUTOUIC OFF)
@@ -314,6 +309,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE CONAN_PKG::cxxopts)
 #include(material_widgets)
 #target_link_libraries(${PROJECT_NAME} PRIVATE qt_material)
 
+
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs/rxqt/include)
 
 if (PACKAGING)
@@ -338,22 +334,14 @@ if (PACKAGING)
 		)
 	else ()
 		set(APPIMAGE_ROOT ${CMAKE_BINARY_DIR}/AppDir)
-		find_program(LINUXDEPLOYQT_EXECUTABLE linuxdeployqt NAMES linuxdeployqt.AppImage linuxdeployqt-continuous-x86_64.AppImage linuxdeployqt-7-x86_64.AppImage)
+		configure_file(${CONAN_QT_ROOT}/bin/qt.conf ${CMAKE_BINARY_DIR}/qt.conf)
+		find_program(LINUXDEPLOYQT_EXECUTABLE linuxdeployqt REQUIRED NAMES linuxdeployqt.AppImage linuxdeployqt-continuous-x86_64.AppImage linuxdeployqt-7-x86_64.AppImage)
 
-		if (NOT APPIMAGE OR APPIMAGE STREQUAL "nofuse")
-			configure_file(
-				${CMAKE_CURRENT_SOURCE_DIR}/cfg/linux_deploy_qt_nofuse.sh
-				${CMAKE_BINARY_DIR}/linux_deploy_qt.sh
-				FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-				@ONLY)
-		else ()
-			configure_file(
-				${CMAKE_CURRENT_SOURCE_DIR}/cfg/linux_deploy_qt.sh
-				${CMAKE_BINARY_DIR}/linux_deploy_qt.sh
-				FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-				@ONLY)
-		endif ()
-
+		configure_file(
+			${CMAKE_CURRENT_SOURCE_DIR}/cfg/linux_deploy_qt.sh
+			${CMAKE_BINARY_DIR}/linux_deploy_qt.sh
+			FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+			@ONLY)
 
 		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cfg/desktop.ini ${APPIMAGE_ROOT}/usr/share/applications/${PROJECT_NAME}.desktop)
 		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cfg/desktop.ini ${APPIMAGE_ROOT}/${PROJECT_NAME}.desktop)
@@ -365,38 +353,17 @@ if (PACKAGING)
 		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/icon-32.png ${APPIMAGE_ROOT}/usr/share/icons/hicolor/32x32/apps/${PROJECT_NAME}.png COPYONLY)
 		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/icon-16.png ${APPIMAGE_ROOT}/usr/share/icons/hicolor/16x16/apps/${PROJECT_NAME}.png COPYONLY)
 
-		#		include(install)
-		if (LINUXDEPLOYQT_EXECUTABLE)
-			message(STATUS "Found qt linux deploy: ${LINUXDEPLOYQT_EXECUTABLE}")
-			add_custom_command(
-				TARGET ${PROJECT_NAME}
-				POST_BUILD
-				COMMAND "${CMAKE_BINARY_DIR}/linux_deploy_qt.sh"
-				COMMENT "Running linuxdeployqt..."
-			)
-			#								add_custom_command(
-			#									TARGET ${PROJECT_NAME}
-			#									POST_BUILD
-			#									WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-			#									COMMAND ${CMAKE_COMMAND} -E env "LD_LIBRARY_PATH=$ENV{LD_LIBRARY_PATH}:${QTDIR}/lib"
-			#									"${LINUXDEPLOYQT_EXECUTABLE}"
-			#									"${APPIMAGE_ROOT}/usr/bin/${PROJECT_NAME}"
-			#									"-unsupported-allow-new-glibc"
-			#									"-appimage"
-			#									"-bundle-non-qt-libs"
-			#									"-always-overwrite"
-			#									"-bundle-non-qt-libs"
-			#									"-extra-plugins=iconengines,platforms,imageformats,platformthemes"
-			#									"-verbose=3"
-			#
-			#									COMMENT "Running linuxdeployqt..."
-			#								)
-			# linuxdeployqt AppDir/usr/share/applications/miledger.desktop -always-overwrite -unsupported-allow-new-glibc -appimage -bundle-non-qt-libs -extra-plugins=iconengines,platformthemes/libqgtk3.so
-			# VERSION=0.1.0 LD_LIBRARY_PATH=/home/edward/qt/lib:$LD_LIBRARY_PATH linuxdeployqt AppDir/usr/bin/miledger -always-overwrite -unsupported-allow-new-glibc -appimage -bundle-non-qt-libs -extra-plugins=iconengines,platforms,imageformats,platformthemes -verbose=3
-		else ()
-			message(FATAL_ERROR "linuxdeployqt NOT FOUND. Please download it https://github.com/probonopd/linuxdeployqt/releases")
-		endif ()
 
+		message(STATUS "Found qt linux deploy: ${LINUXDEPLOYQT_EXECUTABLE}")
+		add_custom_command(
+			TARGET ${PROJECT_NAME}
+			POST_BUILD
+			COMMAND "bash" "-c" "${CMAKE_BINARY_DIR}/linux_deploy_qt.sh"
+			COMMENT "Running linuxdeployqt..."
+		)
+
+		# linuxdeployqt AppDir/usr/share/applications/miledger.desktop -always-overwrite -unsupported-allow-new-glibc -appimage -bundle-non-qt-libs -extra-plugins=iconengines,platformthemes/libqgtk3.so
+		# VERSION=0.1.0 LD_LIBRARY_PATH=/home/edward/qt/lib:$LD_LIBRARY_PATH linuxdeployqt AppDir/usr/bin/miledger -always-overwrite -unsupported-allow-new-glibc -appimage -bundle-non-qt-libs -extra-plugins=iconengines,platforms,imageformats,platformthemes -verbose=3
 		#-unsupported-allow-new-glibc
 	endif ()
 endif ()
